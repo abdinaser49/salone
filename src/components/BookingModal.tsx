@@ -122,6 +122,9 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
        setSelectedService(found);
        setSelectedCategoryId(found.category);
        if (selectedImage) setLocalSelectedImage(selectedImage);
+       setStep(2); // Jump straight to time selection!
+    } else if (!isOpen) {
+       setStep(1); // Reset to step 1 when closed
     }
   }, [preselectedService, isOpen, selectedImage]);
 
