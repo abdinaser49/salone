@@ -156,6 +156,7 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
                 <button onClick={() => { navigate("/rentals"); setMobileOpen(false); }} className="flex items-center gap-4 w-full text-left py-3 px-4 rounded-xl hover:bg-zinc-50 transition-colors font-bold text-lg">Rentals</button>
                 <button onClick={() => { scrollTo("services"); setMobileOpen(false); }} className="flex items-center gap-4 w-full text-left py-3 px-4 rounded-xl hover:bg-zinc-50 transition-colors font-bold text-lg">Services</button>
                 <button onClick={() => { scrollTo("about"); setMobileOpen(false); }} className="flex items-center gap-4 w-full text-left py-3 px-4 rounded-xl hover:bg-zinc-50 transition-colors font-bold text-lg">About Us</button>
+                <button onClick={() => { navigate("/team"); setMobileOpen(false); }} className="flex items-center gap-4 w-full text-left py-3 px-4 rounded-xl hover:bg-zinc-50 transition-colors font-bold text-lg">Team</button>
                 <button onClick={() => { navigate("/contact"); setMobileOpen(false); }} className="flex items-center gap-4 w-full text-left py-3 px-4 rounded-xl hover:bg-zinc-50 transition-colors font-bold text-lg">Contact</button>
               </div>
               
