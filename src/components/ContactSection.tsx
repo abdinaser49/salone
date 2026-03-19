@@ -89,18 +89,7 @@ const ContactSection = () => {
               </div>
             </div>
             
-            {/* Map Placeholder */}
-            <div className="w-full h-48 bg-gray-200 rounded-2xl overflow-hidden relative border border-gray-100 shadow-sm">
-               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15919.261225023348!2d45.32047!3d2.03977!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3d5843b003adcc27%3A0x6bba00d6ef152e!2sMogadishu%2C%20Somalia!5e0!3m2!1sen!2sus!4v1711200000000!5m2!1sen!2sus" 
-                width="100%" 
-                height="100%" 
-                style={{ border: 0 }} 
-                allowFullScreen={true} 
-                loading="lazy" 
-                referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
-            </div>
+            {/* Map removed as requested */}
           </motion.div>
 
           {/* Form */}
