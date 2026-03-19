@@ -62,15 +62,15 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
                scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
             )}>Rentals</button>
 
-            <button onClick={() => scrollTo("about")} className={cn(
-               "transition-colors font-medium text-[15px]",
-               scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
-            )}>About Us</button>
-
             <button onClick={() => scrollTo("services")} className={cn(
                "transition-colors font-medium text-[15px]",
                scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
             )}>Services</button>
+
+            <button onClick={() => scrollTo("about")} className={cn(
+               "transition-colors font-medium text-[15px]",
+               scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
+            )}>About Us</button>
 
             <button onClick={() => navigate("/team")} className={cn(
                "transition-colors font-medium text-[15px]",
