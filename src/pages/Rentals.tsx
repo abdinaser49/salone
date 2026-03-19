@@ -48,10 +48,10 @@ const Rentals = () => {
   const [selectedDress, setSelectedDress] = useState<string>();
   const [selectedImage, setSelectedImage] = useState<string>();
 
-  const openBooking = (name: string, img: string) => {
+  const openBooking = (name?: string, img?: string) => {
     if (loading) return;
     if (!user) {
-      toast.error("Fadlan is diiwaangeli si aad ballan u qabsato.");
+      toast.error("Please login or register to book an appointment.");
       navigate("/login");
       return;
     }
@@ -66,7 +66,7 @@ const Rentals = () => {
 
   return (
     <div className="min-h-screen bg-[#fdfbf7] font-sans selection:bg-primary/20">
-      <Navbar onBookNow={() => setBookingOpen(true)} />
+      <Navbar onBookNow={() => openBooking()} />
       
       {/* Hero Section */}
       <div className="pt-32 pb-16 bg-white border-b border-gray-100">
