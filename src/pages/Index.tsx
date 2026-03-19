@@ -26,7 +26,7 @@ const Index = () => {
     }
     
     if (!user) {
-      toast.error("Fadlan is diiwaangeli (Login/Register) si aad balan u qabato.");
+      toast.error("Please login or register to book an appointment.");
       navigate("/login");
       return;
     }
@@ -42,7 +42,6 @@ const Index = () => {
       <AboutUsSection />
       <ServicesSection onSelectService={(s) => openBooking(s)} />
       <BridalRentalsSection 
-        onRentDress={(dress, img) => openBooking(dress, img)}
         onBookHenna={(img) => openBooking("Henna Art", img)}
       />
       <StylistsSection />

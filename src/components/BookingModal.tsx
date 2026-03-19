@@ -9,19 +9,81 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
+// Service Images
+import hairImg from "@/assets/hair.jpg";
+import nailImg from "@/assets/Nail Art1.jpg";
+import facialImg from "@/assets/makeup.jpg";
+import bodyImg from "@/assets/service-massage.png";
+import aromaticHenna from "@/assets/henna.jpg";
+import rentalHero from "@/assets/rentals_hero.png";
+import dirac1 from "@/assets/dirac1.jpg";
+import dirac2 from "@/assets/dirac2.jpg";
+import dirac5 from "@/assets/dirac5.jpg";
+import dirac6 from "@/assets/dirac6.jpg";
+import dress1 from "@/assets/dress1.jpg";
+import dress2 from "@/assets/dress2.jpg";
+import dress3 from "@/assets/dress3.jpg";
+import dress4 from "@/assets/dress4.jpg";
+import dress5 from "@/assets/dress5.jpg";
+import diracSt1 from "@/assets/dirac_1.png";
+import diracSt2 from "@/assets/dirac_2.png";
+import diracSt3 from "@/assets/dirac_3.png";
+import wedding1 from "@/assets/Weddin1.jpg";
+import wedding2 from "@/assets/Weddin2.jpg";
+import wedding4 from "@/assets/Weddin4.png";
+import henna2 from "@/assets/henna2.jpg";
+import henna3 from "@/assets/henna3.jpg";
+import henna4 from "@/assets/henna4.jpg";
+import makeup3 from "@/assets/makeup3.jpg";
+import makeup4 from "@/assets/makeup4.jpg";
+import nails2 from "@/assets/Nail Art2.jpg";
+import nails4 from "@/assets/Nail Art4.jpg";
+
 // Services with price and duration
+const categories = [
+  { id: "beauty", name: "Beauty & Spa", icon: "✨", image: facialImg },
+  { id: "hair", name: "Hair Styling", icon: "✂️", image: hairImg },
+  { id: "nails", name: "Nail Art", icon: "💅", image: nailImg },
+  { id: "rentals", name: "Dress Rentals", icon: "👗", image: rentalHero },
+  { id: "henna", name: "Henna Art", icon: "🌸", image: aromaticHenna },
+];
+
 const services = [
-  { name: "Hair Styling", price: 85, duration: "60–120 min", icon: "✂️", description: "Cut, color & blowout by master stylists", color: "from-violet-500/10 to-purple-500/10", border: "border-violet-200/50" },
-  { name: "Nail Artistry", price: 55, duration: "45–90 min", icon: "💅", description: "Manicure, pedicure & bespoke nail art", color: "from-rose-500/10 to-pink-500/10", border: "border-rose-200/50" },
-  { name: "Facial Treatments", price: 120, duration: "60–90 min", icon: "🌿", description: "Rejuvenating facials with premium products", color: "from-emerald-500/10 to-teal-500/10", border: "border-emerald-200/50" },
-  { name: "Body & Massage", price: 100, duration: "60–120 min", icon: "🌺", description: "Deep tissue, hot stone & aromatherapy", color: "from-amber-500/10 to-orange-500/10", border: "border-amber-200/50" },
-  { name: "Henna Art", price: 65, duration: "60–90 min", icon: "🌸", description: "Intricate bridal & party henna designs", color: "from-rose-500/10 to-yellow-500/10", border: "border-rose-200/50" },
-  { name: "Wedding Dress Rental", price: 200, duration: "1 day", icon: "👗", description: "Premium bridal and evening gowns", color: "from-blue-500/10 to-indigo-500/10", border: "border-blue-200/50" },
+  // Beauty
+  { id: 1, category: "beauty", name: "Facial Treatment", price: 120, duration: "60–90 min", image: facialImg },
+  { id: 2, category: "beauty", name: "Body & Massage", price: 100, duration: "60–120 min", image: bodyImg },
+  { id: 8, category: "beauty", name: "Glam Makeup", price: 150, duration: "90 min", image: makeup3 },
+  { id: 9, category: "beauty", name: "Bridal Makeup", price: 250, duration: "120 min", image: makeup4 },
+  
+  // Hair
+  { id: 3, category: "hair", name: "Hair Styling", price: 85, duration: "60–120 min", image: hairImg },
+  { id: 10, category: "hair", name: "Bridal Hair", price: 180, duration: "120 min", image: hairImg },
+  
+  // Nails
+  { id: 4, category: "nails", name: "Nail Artistry", price: 55, duration: "45–90 min", image: nailImg },
+  { id: 11, category: "nails", name: "Gel Extensions", price: 75, duration: "90 min", image: nails2 },
+  { id: 12, category: "nails", name: "Manicure & Art", price: 65, duration: "60 min", image: nails4 },
+  
+  // Rentals - Dirac VIP and Tash
+  { id: 6, category: "rentals", name: "Dirac VIP", price: 15, duration: "1 day", image: dirac1 },
+  { id: 23, category: "rentals", name: "Dirac VIP", price: 80, duration: "1 day", image: dirac5 },
+  { id: 24, category: "rentals", name: "Dirac VIP", price: 90, duration: "1 day", image: dirac6 },
+
+  { id: 26, category: "rentals", name: "Tash", price: 180, duration: "1 day", image: dress1 },
+  { id: 27, category: "rentals", name: "Tash", price: 190, duration: "1 day", image: dress2 },
+  { id: 28, category: "rentals", name: "Tash", price: 200, duration: "1 day", image: dress3 },
+  { id: 29, category: "rentals", name: "Tash", price: 210, duration: "1 day", image: dress4 },
+  { id: 30, category: "rentals", name: "Tash", price: 220, duration: "1 day", image: dress5 },
+  
+  // Henna
+  { id: 7, category: "henna", name: "Henna Session", price: 65, duration: "60–90 min", image: aromaticHenna },
+  { id: 20, category: "henna", name: "Bridal Henna", price: 150, duration: "180 min", image: henna2 },
+  { id: 21, category: "henna", name: "Modern Henna Art", price: 45, duration: "45 min", image: henna3 },
+  { id: 22, category: "henna", name: "Traditional Patterns", price: 55, duration: "60 min", image: henna4 },
 ];
 
 const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
 
-// EVC Plus USSD payment number
 const PAYMENT_MERCHANT = "614498649";
 
 interface BookingModalProps {
@@ -34,29 +96,13 @@ interface BookingModalProps {
 const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: BookingModalProps) => {
   const { user } = useAuth();
   const [step, setStep] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState("Beauty");
-  const [selectedService, setSelectedService] = useState(
-    services[0]
-  );
-
-  useEffect(() => {
-    if (preselectedService && isOpen) {
-      const found = services.find(s => s.name === preselectedService) || 
-                    (preselectedService.includes("Dress") || preselectedService.includes("Suit") ? services[5] : services[4]);
-      setSelectedService(found);
-      
-      // If it's a specific dress/suit name not in our static list, we might want to keep the name
-      if (!services.find(s => s.name === preselectedService)) {
-        if (preselectedService.includes("Dress") || preselectedService.includes("Suit")) {
-           setSelectedService({ ...services[5], name: preselectedService });
-        }
-      }
-    }
-  }, [preselectedService, isOpen]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedService, setSelectedService] = useState<any>(services[0]);
+  const [localSelectedImage, setLocalSelectedImage] = useState<string | undefined>(selectedImage);
   const [selectedEmployee, setSelectedEmployee] = useState("Any");
   const [date, setDate] = useState<Date>(new Date());
-  const [startTime, setStartTime] = useState("8:00 am");
-  const [endTime, setEndTime] = useState("8:00 am");
+  const [startTime, setStartTime] = useState("9:00 AM");
+  const [endTime, setEndTime] = useState("10:00 AM");
   
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -69,21 +115,39 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
     }
   }, [user]);
 
+  useEffect(() => {
+    if (preselectedService && isOpen) {
+       const found = services.find(s => s.name === preselectedService) || 
+                     (preselectedService.toLowerCase().includes("dirac") ? services[5] : services[4]);
+       setSelectedService(found);
+       setSelectedCategoryId(found.category);
+       if (selectedImage) setLocalSelectedImage(selectedImage);
+    }
+  }, [preselectedService, isOpen, selectedImage]);
+
   const resetAndClose = () => {
     setStep(1);
+    setSelectedCategoryId(null);
     onClose();
   };
 
   const steps = [
-    { id: 1, label: "Time" },
-    { id: 2, label: "Service" },
+    { id: 1, label: "Choose Service" },
+    { id: 2, label: "Time" },
     { id: 3, label: "Details" },
     { id: 4, label: "Payment" },
     { id: 5, label: "Done" },
   ];
 
   const handleNext = () => setStep(s => Math.min(s + 1, 5));
-  const handleBack = () => setStep(s => Math.max(s - 1, 1));
+  const handleBack = () => setStep(s => {
+    if (s === 2 && !selectedCategoryId) return 1; // Basic safety
+    return Math.max(s - 1, 1);
+  });
+
+  const filteredServices = selectedCategoryId 
+    ? services.filter(s => s.category === selectedCategoryId)
+    : [];
 
   const handleConfirm = async () => {
     if (!user) {
@@ -96,17 +160,21 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
       client_id: user?.id,
       name: name,
       phone: phone,
-      service: selectedImage && (selectedService.name === "Wedding Dress Rental" || selectedService.name === "Henna Art") 
-                ? `${selectedService.name} (Selected Style)` 
+      service: localSelectedImage && (selectedService.name === "Wedding Dress Rental" || selectedService.name === "Henna Art") 
+                ? `${selectedService.name} (Selected style)` 
                 : selectedService.name,
       booking_date: date ? format(date, "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd"),
       booking_time: startTime,
       status: "Pending Confirmation",
       amount: selectedService.price,
+      image_url: localSelectedImage, // Removed from actual DB call if column missing, but kept for future use if we add it
     };
 
+    // Remove image_url before inserting if it causes issues, but the prompt says it is missing
+    const { image_url, ...dbBookingData } = bookingData;
+
     try {
-      const { data, error } = await supabase.from('bookings').insert([bookingData]).select();
+      const { data, error } = await supabase.from('bookings').insert([dbBookingData]).select();
       if (error) throw error;
       setStep(5);
       toast.success("Appointment booked!");
@@ -118,211 +186,283 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-4xl max-h-[95vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col font-sans text-slate-700 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="bg-white w-full max-w-5xl max-h-[92vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col font-sans text-slate-700 relative border border-white/20"
+      >
         
         {/* Stepper Header */}
-        <div className="flex w-full border-b shrink-0">
+        <div className="flex w-full border-b border-gray-100 shrink-0 bg-[#fdfbf7]/50">
           {steps.map((s) => (
             <div 
               key={s.id}
               className={cn(
-                "flex-1 flex items-center justify-center py-4 gap-2 border-r last:border-r-0 transition-colors",
-                step === s.id ? "bg-primary text-white" : "bg-[#f8f9fa] text-slate-400"
+                "flex-1 flex flex-col items-center justify-center py-5 gap-1.5 transition-all relative overflow-hidden",
+                step >= s.id ? "text-primary" : "text-slate-300"
               )}
             >
               <div className={cn(
-                "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold",
-                step === s.id ? "bg-white/20" : "bg-slate-200"
+                "w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold z-10 transition-colors",
+                step >= s.id ? "bg-primary text-white" : "bg-slate-100 text-slate-400"
               )}>
-                {s.id}
+                {step > s.id ? <Check className="w-4 h-4" /> : s.id}
               </div>
-              <span className="text-xs font-bold hidden sm:inline">{s.label}</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest hidden sm:inline">{s.label}</span>
+              {step === s.id && (
+                <motion.div layoutId="step-indicator" className="absolute bottom-0 left-0 right-0 h-1 bg-primary" />
+              )}
             </div>
           ))}
         </div>
 
         {/* Content Area - Scrollable */}
-        <div className="p-6 sm:p-8 overflow-y-auto flex-1 custom-scrollbar">
+        <div className="p-8 sm:p-12 overflow-y-auto flex-1 custom-scrollbar">
           <AnimatePresence mode="wait">
             {step === 1 && (
-              <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="space-y-6">
-                <h3 className="text-lg font-bold text-slate-800">Please select service:</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Category</label>
-                    <select 
-                      className="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm font-medium"
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                    >
-                      <option>Beauty</option>
-                      <option>Hair</option>
-                      <option>Nails</option>
-                      <option>Dress Rentals</option>
-                      <option>Henna</option>
-                    </select>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Service</label>
-                    <select 
-                      className="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm font-medium"
-                      value={selectedService?.name}
-                      onChange={(e) => setSelectedService(services.find(s => s.name === e.target.value) || services[0])}
-                    >
-                      {services.map(s => <option key={s.name}>{s.name}</option>)}
-                    </select>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Employee</label>
-                    <select 
-                      className="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm font-medium"
-                      value={selectedEmployee}
-                      onChange={(e) => setSelectedEmployee(e.target.value)}
-                    >
-                      <option>Any</option>
-                      <option>Deeqa Axmed</option>
-                      <option>Layla Cali</option>
-                      <option>Hodan Maxamed</option>
-                      <option>Sahra Cabdi</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t pt-6">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Date</label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <button className="w-full text-left p-4 bg-slate-50 border-0 rounded-2xl hover:bg-slate-100 flex justify-between items-center text-sm font-medium">
-                          {date ? format(date, "PPP") : "Select Date"}
-                          <CalendarIcon className="w-4 h-4 text-slate-400" />
+              <motion.div initial={{opacity:0, y: 10}} animate={{opacity:1, y: 0}} exit={{opacity:0, y: -10}} className="space-y-10">
+                {!selectedCategoryId ? (
+                  <div className="space-y-8">
+                    <div className="text-center space-y-2">
+                       <h3 className="text-3xl font-display font-bold text-charcoal">Choose a Category</h3>
+                       <p className="text-gray-400 text-sm">Select the type of service you are looking for</p>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+                      {categories.map((cat) => (
+                        <button
+                          key={cat.id}
+                          onClick={() => setSelectedCategoryId(cat.id)}
+                          className="group flex flex-col items-center gap-4 transition-all"
+                        >
+                          <div className="relative w-full aspect-square rounded-[2rem] overflow-hidden border-2 border-slate-100 group-hover:border-primary group-hover:shadow-2xl group-hover:shadow-primary/20 transition-all shadow-lg">
+                            <img src={cat.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={cat.name} />
+                          </div>
+                          <span className="font-bold text-xs uppercase tracking-widest text-charcoal/70 group-hover:text-primary">{cat.name}</span>
                         </button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 rounded-3xl overflow-hidden border-0 shadow-2xl">
-                        <Calendar mode="single" selected={date} onSelect={(d) => d && setDate(d)} initialFocus />
-                      </PopoverContent>
-                    </Popover>
+                      ))}
+                    </div>
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Start from</label>
-                    <select className="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm font-medium" value={startTime} onChange={e => setStartTime(e.target.value)}>
-                      {timeSlots.map(t => <option key={t}>{t}</option>)}
-                    </select>
+                ) : (
+                  <div className="space-y-8">
+                    <div className="flex items-center justify-between">
+                       <button 
+                         onClick={() => setSelectedCategoryId(null)}
+                         className="flex items-center gap-2 text-primary text-[10px] font-bold uppercase tracking-widest hover:underline"
+                       >
+                         <ArrowLeft className="w-3 h-3" /> Back to Categories
+                       </button>
+                       <h3 className="text-2xl font-display font-bold text-charcoal">Select Service</h3>
+                       <div className="w-20" /> {/* Spacer */}
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                       {filteredServices.map((svc) => (
+                         <button
+                           key={svc.id}
+                           onClick={() => {
+                             setSelectedService(svc);
+                             setLocalSelectedImage(svc.image);
+                             handleNext();
+                           }}
+                           className={cn(
+                             "group text-left p-6 rounded-[2rem] border-2 transition-all flex items-center gap-4",
+                             selectedService.id === svc.id ? "border-primary bg-primary/5 shadow-xl shadow-primary/10" : "border-slate-100 hover:border-primary/50 hover:bg-slate-50"
+                           )}
+                         >
+                           <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0 shadow-sm">
+                             <img src={svc.image} className="w-full h-full object-cover" alt={svc.name} />
+                           </div>
+                           <div className="flex-1 min-w-0">
+                             <p className="font-bold text-charcoal">{svc.name}</p>
+                             <p className="text-primary font-bold text-sm">${svc.price}</p>
+                           </div>
+                         </button>
+                       ))}
+                    </div>
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Finish by</label>
-                    <select className="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm font-medium" value={endTime} onChange={e => setEndTime(e.target.value)}>
-                      {timeSlots.map(t => <option key={t}>{t}</option>)}
-                    </select>
-                  </div>
-                </div>
+                )}
               </motion.div>
             )}
 
             {step === 2 && (
-              <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="space-y-6">
-                <h3 className="text-lg font-bold text-slate-800">Confirm Service</h3>
-                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                   <div className="flex justify-between mb-4">
-                      <span className="text-slate-500 text-sm">Selected treatment</span>
-                      <span className="font-bold text-primary">{selectedService.name}</span>
+              <motion.div initial={{opacity:0, y: 10}} animate={{opacity:1, y: 0}} exit={{opacity:0, y: -10}} className="space-y-10">
+                <div className="text-center space-y-2">
+                   <h3 className="text-3xl font-display font-bold text-charcoal">Appointment Time</h3>
+                   <p className="text-gray-400 text-sm">When would you like to visit us?</p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                   <div className="space-y-4">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Select Date</label>
+                      <div className="bg-[#fdfbf7] p-2 rounded-[2.5rem] border border-gray-100 shadow-inner">
+                        <Calendar 
+                          mode="single" 
+                          selected={date} 
+                          onSelect={(d) => d && setDate(d)} 
+                          className="w-full"
+                        />
+                      </div>
                    </div>
-                   {selectedImage && (
-                     <div className="mb-4 flex flex-col gap-2">
-                        <span className="text-slate-500 text-sm">Selected style/item</span>
-                        <div className="w-24 h-24 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
-                           <img src={selectedImage} className="w-full h-full object-cover" alt="Selected" />
+
+                   <div className="space-y-8">
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Available Slots</label>
+                        <div className="grid grid-cols-3 gap-3">
+                           {timeSlots.map((slot) => (
+                             <button
+                               key={slot}
+                               onClick={() => setStartTime(slot)}
+                               className={cn(
+                                 "py-4 rounded-2xl font-bold text-xs transition-all border-2",
+                                 startTime === slot ? "bg-primary text-white border-primary shadow-lg shadow-primary/20" : "bg-white text-charcoal border-slate-100 hover:border-primary/50"
+                               )}
+                             >
+                               {slot}
+                             </button>
+                           ))}
                         </div>
-                     </div>
-                   )}
-                   <div className="flex justify-between mb-4">
-                      <span className="text-slate-500 text-sm">Duration</span>
-                      <span className="font-medium text-sm">{selectedService.duration}</span>
-                   </div>
-                   <div className="flex justify-between text-xl font-bold pt-4 border-t">
-                      <span>Price</span>
-                      <span className="text-slate-900">${selectedService.price}</span>
+                      </div>
+
+                      <div className="space-y-4">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Prefered Employee</label>
+                        <select className="w-full p-5 bg-[#fdfbf7] border-0 rounded-2xl text-sm font-bold text-charcoal focus:ring-2 focus:ring-primary outline-none">
+                           <option>Any Available Specialist</option>
+                           <option>Deeqa Axmed (Master Artisan)</option>
+                           <option>Layla Cali (Hair Expert)</option>
+                           <option>Hodan Maxamed (Nail Pro)</option>
+                        </select>
+                      </div>
                    </div>
                 </div>
               </motion.div>
             )}
 
             {step === 3 && (
-              <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="space-y-6">
-                <h3 className="text-lg font-bold text-slate-800">Your Details:</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Full Name</label>
-                    <input type="text" className="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm font-medium" value={name} onChange={e => setName(e.target.value)} placeholder="Enter your name" />
+              <motion.div initial={{opacity:0, y: 10}} animate={{opacity:1, y: 0}} exit={{opacity:0, y: -10}} className="space-y-10 max-w-xl mx-auto">
+                <div className="text-center space-y-2">
+                   <h3 className="text-3xl font-display font-bold text-charcoal">Personal Details</h3>
+                   <p className="text-gray-400 text-sm">Almost there! Just need your contact info</p>
+                </div>
+
+                <div className="space-y-6">
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Your Name</label>
+                      <input 
+                        type="text" 
+                        value={name} 
+                        onChange={e => setName(e.target.value)}
+                        placeholder="e.g. Maryam Cali"
+                        className="w-full p-5 bg-[#fdfbf7] border-0 rounded-2xl text-sm font-bold text-charcoal focus:ring-2 focus:ring-primary outline-none shadow-inner" 
+                      />
+                   </div>
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
+                      <div className="relative">
+                         <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold border-r pr-3 mr-3">+252</div>
+                         <input 
+                          type="tel" 
+                          value={phone} 
+                          onChange={e => setPhone(e.target.value)}
+                          placeholder="61XXXXXXX"
+                          className="w-full p-5 pl-20 bg-[#fdfbf7] border-0 rounded-2xl text-sm font-bold text-charcoal focus:ring-2 focus:ring-primary outline-none shadow-inner" 
+                        />
+                      </div>
+                   </div>
+                </div>
+
+                {/* Summary Card */}
+                <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 flex items-center gap-4">
+                  <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 shadow-lg shadow-black/5">
+                    <img src={localSelectedImage} className="w-full h-full object-cover" />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Phone Number</label>
-                    <input type="tel" className="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-primary outline-none text-sm font-medium" value={phone} onChange={e => setPhone(e.target.value)} placeholder="061XXXXXXX" />
+                  <div>
+                    <h4 className="font-bold text-charcoal">{selectedService.name}</h4>
+                    <p className="text-xs text-gray-400 font-medium">{format(date, "PPP")} at {startTime}</p>
+                    <p className="text-primary font-bold text-lg mt-1">${selectedService.price}</p>
                   </div>
                 </div>
               </motion.div>
             )}
 
             {step === 4 && (
-              <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="space-y-6 flex flex-col items-center py-4">
-                <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-2 shadow-inner">
-                  <CreditCard className="w-10 h-10" />
+              <motion.div initial={{opacity:0, y: 10}} animate={{opacity:1, y: 0}} exit={{opacity:0, y: -10}} className="space-y-10 flex flex-col items-center py-4">
+                <div className="text-center space-y-2">
+                   <h3 className="text-3xl font-display font-bold text-charcoal">Secure Payment</h3>
+                   <p className="text-gray-400 text-sm">Please pay to merchant {PAYMENT_MERCHANT} (EVC Plus)</p>
                 </div>
-                <h3 className="text-2xl font-bold text-slate-800 text-center">Payment Confirmation</h3>
-                <p className="text-slate-500 text-center max-w-md text-sm">Please complete the payment of <strong>${selectedService.price}</strong> to confirm your appointment.</p>
-                <div className="w-full max-w-sm bg-zinc-900 text-white p-6 rounded-3xl space-y-4 shadow-xl">
-                   <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest opacity-50">
-                      <span>Merchant</span>
-                      <span>EVC Plus</span>
+
+                <div className="w-full max-w-sm bg-zinc-950 text-white p-8 rounded-[3rem] space-y-8 shadow-2xl relative overflow-hidden group">
+                   <div className="absolute -top-12 -right-12 w-40 h-40 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/30 transition-colors" />
+                   <div className="flex justify-between items-center opacity-60">
+                      <div className="flex flex-col">
+                        <span className="text-[8px] font-bold uppercase tracking-widest">Merchant</span>
+                        <span className="text-xs font-bold">QURUX DUMAR SPA</span>
+                      </div>
+                      <Sparkles className="w-5 h-5 text-primary" />
                    </div>
-                   <div className="text-center text-3xl font-mono font-bold tracking-[0.2em] py-2">
-                      {PAYMENT_MERCHANT}
+                   
+                   <div className="text-center space-y-2">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">Payment Code</span>
+                      <div className="text-4xl font-mono font-bold tracking-[0.2em] text-primary">{PAYMENT_MERCHANT}</div>
                    </div>
-                   <button onClick={() => setPaid(true)} className={cn("w-full py-4 rounded-2xl font-bold uppercase tracking-widest text-xs transition-all", paid ? "bg-emerald-500" : "bg-primary shadow-lg shadow-primary/30")}>
-                      {paid ? "Payment Verified" : "I have paid"}
+
+                   <button 
+                     onClick={() => setPaid(true)} 
+                     className={cn(
+                       "w-full py-5 rounded-3xl font-bold uppercase tracking-widest text-[10px] transition-all relative z-10", 
+                       paid ? "bg-emerald-500 text-white" : "bg-white text-black hover:bg-primary hover:text-white"
+                     )}
+                   >
+                      {paid ? "✔ Payment Verified" : "I have sent the payment"}
                    </button>
                 </div>
               </motion.div>
             )}
 
             {step === 5 && (
-              <motion.div initial={{opacity:0, scale:0.9}} animate={{opacity:1, scale:1}} className="flex flex-col items-center py-6">
-                <div className="w-20 h-20 bg-emerald-500 text-white rounded-full flex items-center justify-center mb-6 shadow-xl shadow-emerald-500/20">
-                  <Check className="w-10 h-10 stroke-[3px]" />
+              <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} className="flex flex-col items-center py-10 space-y-10">
+                <div className="relative">
+                   <motion.div 
+                     initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                     className="w-24 h-24 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-2xl shadow-emerald-500/20 z-10 relative"
+                   >
+                     <Check className="w-12 h-12 stroke-[3px]" />
+                   </motion.div>
+                   <div className="absolute -inset-4 bg-emerald-100 rounded-full blur-xl opacity-50 animate-pulse" />
                 </div>
-                <h3 className="text-3xl font-bold text-slate-900 mb-2">Done!</h3>
-                <p className="text-slate-500 mb-6 text-center">Thank you! Your booking is complete.</p>
-                <div className="w-full max-w-sm bg-slate-50 rounded-3xl overflow-hidden mb-8 border border-slate-100">
-                   <div className="p-4 border-b bg-white">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Appointment Details</p>
-                   </div>
-                   <div className="p-5 space-y-4 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Service</span>
-                        <span className="font-bold text-slate-900">{selectedService.name}</span>
+
+                <div className="text-center space-y-2">
+                   <h3 className="text-4xl font-display font-bold text-charcoal">Mabruuk!</h3>
+                   <p className="text-gray-400 font-medium">Your appointment has been successfully scheduled.</p>
+                </div>
+
+                <div className="w-full max-w-sm bg-[#fdfbf7] rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-xl shadow-gray-200/50">
+                   <div className="p-8 space-y-6 text-sm">
+                      <div className="flex justify-between items-center border-b border-gray-100 pb-4">
+                         <span className="text-gray-400 font-medium">Service</span>
+                         <span className="font-bold text-charcoal">{selectedService.name}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Date</span>
-                        <span className="font-bold text-slate-900">{format(date, "PPP")}</span>
+                      <div className="flex justify-between items-center border-b border-gray-100 pb-4">
+                         <span className="text-gray-400 font-medium">Date</span>
+                         <span className="font-bold text-charcoal">{format(date, "PPP")}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Time</span>
-                        <span className="font-bold text-slate-900">{startTime}</span>
+                      <div className="flex justify-between items-center border-b border-gray-100 pb-4">
+                         <span className="text-gray-400 font-medium">Time</span>
+                         <span className="font-bold text-charcoal">{startTime}</span>
                       </div>
-                      {selectedImage && (
-                        <div className="flex justify-between items-center pt-2">
-                           <span className="text-slate-500">Choice</span>
-                           <div className="w-10 h-10 rounded-lg overflow-hidden border border-slate-200">
-                             <img src={selectedImage} className="w-full h-full object-cover" alt="Choice" />
-                           </div>
-                        </div>
-                      )}
+                      <div className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-inner">
+                         <span className="text-gray-400 font-medium text-xs">Total Amount</span>
+                         <span className="font-black text-primary text-xl">${selectedService.price}</span>
+                      </div>
                    </div>
                 </div>
-                <button onClick={resetAndClose} className="bg-primary text-white px-12 py-4 rounded-full font-bold shadow-xl shadow-primary/30 hover:scale-105 transition-transform">
-                  Close
+
+                <button 
+                  onClick={resetAndClose} 
+                  className="bg-charcoal text-white px-16 py-5 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-2xl shadow-gray-300 hover:scale-105 active:scale-95 transition-all"
+                >
+                  Close Window
                 </button>
               </motion.div>
             )}
@@ -331,34 +471,54 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
 
         {/* Footer Buttons */}
         {step < 5 && (
-          <div className="p-6 sm:p-8 border-t bg-[#fdfdfd] flex justify-between items-center shrink-0">
+          <div className="p-8 sm:p-10 border-t border-gray-100 bg-white flex justify-between items-center shrink-0">
             <button 
               onClick={handleBack}
-              disabled={step === 1}
-              className="bg-slate-100 text-slate-500 px-8 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-200 transition-colors"
+              disabled={step === 1 && !selectedCategoryId}
+              className="group flex items-center gap-2 text-slate-400 hover:text-charcoal px-4 py-2 disabled:opacity-30 transition-colors"
             >
-              Previous
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Previous</span>
             </button>
-            <button 
-              onClick={step === 4 ? handleConfirm : handleNext}
-              className="bg-primary text-white px-8 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
-            >
-              {step === 4 ? "Complete" : "Next"}
-            </button>
+            <div className="flex items-center gap-2">
+               {step < 4 ? (
+                 <button 
+                  onClick={handleNext}
+                  disabled={step === 1 && !selectedCategoryId}
+                  className="bg-primary text-white px-10 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+                >
+                  Next Step
+                </button>
+               ) : (
+                 <button 
+                  onClick={handleConfirm}
+                  disabled={!paid}
+                  className={cn(
+                    "px-12 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-xl active:scale-95",
+                    paid ? "bg-charcoal text-white hover:bg-black shadow-black/20" : "bg-slate-100 text-slate-400 shadow-none cursor-not-allowed"
+                  )}
+                >
+                  Complete Booking
+                </button>
+               )}
+            </div>
           </div>
         )}
         
         {/* Close button X */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors sm:hidden"
+          className="absolute top-6 right-6 text-slate-400 hover:text-charcoal transition-colors z-50 p-2 hover:bg-slate-100 rounded-full"
         >
           <X className="w-6 h-6" />
         </button>
 
-      </div>
+      </motion.div>
     </div>
   );
 };
 
 export default BookingModal;
+
+// Simple internal component for cleaner structure
+const ArrowLeft = ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>;

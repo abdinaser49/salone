@@ -57,24 +57,29 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
 
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-7 lg:gap-8 font-body text-sm">
+            <button onClick={() => navigate("/rentals")} className={cn(
+               "transition-colors font-medium text-[15px]",
+               scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
+            )}>Rentals</button>
+
             <button onClick={() => scrollTo("about")} className={cn(
-              "transition-colors font-medium text-[15px]",
-              scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
+               "transition-colors font-medium text-[15px]",
+               scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
             )}>About Us</button>
 
             <button onClick={() => scrollTo("services")} className={cn(
-              "transition-colors font-medium text-[15px]",
-              scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
+               "transition-colors font-medium text-[15px]",
+               scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
             )}>Services</button>
 
             <button onClick={() => scrollTo("team")} className={cn(
-              "transition-colors font-medium text-[15px]",
-              scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
+               "transition-colors font-medium text-[15px]",
+               scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
             )}>Team</button>
 
             <button onClick={() => scrollTo("contact")} className={cn(
-              "transition-colors font-medium text-[15px]",
-              scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
+               "transition-colors font-medium text-[15px]",
+               scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
             )}>Contact</button>
 
             {/* Added a vertical divider for auth links if needed */}
@@ -129,6 +134,15 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
         </div>
       </div>
 
+      {/* Mobile-only visible quick-nav (Horizontal Scrolling) */}
+      <div className="md:hidden bg-background/80 backdrop-blur-md border-b border-border/50 h-14 flex items-center overflow-x-auto no-scrollbar px-6 gap-8 sticky top-0 shadow-sm">
+          <button onClick={() => navigate("/rentals")} className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.15em] text-charcoal opacity-80 active:text-primary">Rentals</button>
+          <button onClick={() => scrollTo("services")} className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.15em] text-charcoal opacity-80 active:text-primary">Services</button>
+          <button onClick={() => scrollTo("about")} className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.15em] text-charcoal opacity-80 active:text-primary">About</button>
+          <button onClick={() => scrollTo("team")} className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.15em] text-charcoal opacity-80 active:text-primary">Team</button>
+          <button onClick={() => scrollTo("contact")} className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.15em] text-charcoal opacity-80 active:text-primary">Contact</button>
+      </div>
+
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -137,38 +151,42 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-background border-b border-border overflow-hidden"
           >
-            <div className="px-6 py-6 space-y-4 font-body text-sm">
-              <button onClick={() => scrollTo("about")} className="block w-full text-left py-2 font-medium hover:text-primary transition-colors">About Us</button>
-              <button onClick={() => scrollTo("services")} className="block w-full text-left py-2 font-medium hover:text-primary transition-colors">Services</button>
-              <button onClick={() => scrollTo("team")} className="block w-full text-left py-2 font-medium hover:text-primary transition-colors">Team</button>
-              <button onClick={() => scrollTo("contact")} className="block w-full text-left py-2 font-medium hover:text-primary transition-colors">Contact</button>
+            <div className="px-6 py-8 space-y-6">
+              <div className="space-y-4">
+                <button onClick={() => { navigate("/rentals"); setMobileOpen(false); }} className="flex items-center gap-4 w-full text-left py-3 px-4 rounded-xl hover:bg-zinc-50 transition-colors font-bold text-lg">Rentals</button>
+                <button onClick={() => { scrollTo("services"); setMobileOpen(false); }} className="flex items-center gap-4 w-full text-left py-3 px-4 rounded-xl hover:bg-zinc-50 transition-colors font-bold text-lg">Services</button>
+                <button onClick={() => { scrollTo("about"); setMobileOpen(false); }} className="flex items-center gap-4 w-full text-left py-3 px-4 rounded-xl hover:bg-zinc-50 transition-colors font-bold text-lg">About Us</button>
+                <button onClick={() => { scrollTo("contact"); setMobileOpen(false); }} className="flex items-center gap-4 w-full text-left py-3 px-4 rounded-xl hover:bg-zinc-50 transition-colors font-bold text-lg">Contact</button>
+              </div>
               
-              {isAdmin ? (
-                <Link 
-                  to="/dashboard" 
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-2 w-full text-left py-2 font-medium text-primary"
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </Link>
-              ) : (
-                <Link 
-                  to="/login" 
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-2 w-full text-left py-2 font-medium hover:text-primary transition-colors"
-                >
-                  <LogIn className="w-4 h-4" />
-                  Login
-                </Link>
-              )}
+              <div className="pt-6 border-t border-border">
+                {isAdmin ? (
+                  <Link 
+                    to="/dashboard" 
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 w-full py-4 text-primary font-black uppercase tracking-widest text-xs"
+                  >
+                    <LayoutDashboard className="w-5 h-5" />
+                    Admin Dashboard
+                  </Link>
+                ) : (
+                  <Link 
+                    to="/login" 
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 w-full py-4 text-charcoal font-black uppercase tracking-widest text-xs"
+                  >
+                    <LogIn className="w-5 h-5" />
+                    Login Account
+                  </Link>
+                )}
 
-              <button
-                onClick={() => { onBookNow(); setMobileOpen(false); }}
-                className="w-full bg-primary text-primary-foreground py-4 rounded-xl text-xs tracking-[0.2em] uppercase font-bold shadow-lg shadow-primary/20 active:scale-95 transition-all"
-              >
-                Book Now
-              </button>
+                <button
+                  onClick={() => { onBookNow(); setMobileOpen(false); }}
+                  className="w-full mt-4 bg-primary text-primary-foreground py-5 rounded-[1.5rem] text-[10px] tracking-[0.2em] uppercase font-black shadow-xl shadow-primary/20 active:scale-95 transition-all"
+                >
+                  Book Now
+                </button>
+              </div>
             </div>
           </motion.div>
         )}

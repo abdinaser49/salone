@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, ShoppingBag, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { Sparkles, ArrowRight, ShoppingBag, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // Henna Images
 import henna1 from "@/assets/henna.jpg";
@@ -9,169 +9,115 @@ import henna3 from "@/assets/henna2.jpg";
 import henna4 from "@/assets/henna3.jpg";
 import henna5 from "@/assets/henna4.jpg";
 
-// Dress Images
-import dress1 from "@/assets/Weddin1.jpg";
-import dress2 from "@/assets/Weddin2.jpg";
-import dress3 from "@/assets/suit.jpg";
-import dress4 from "@/assets/suit1.jpg";
-import dress5 from "@/assets/dress2.jpg";
-import dress6 from "@/assets/dress3.jpg";
-import dress7 from "@/assets/dress4.jpg";
-import dress8 from "@/assets/dress5.jpg";
-
 interface BridalRentalsSectionProps {
-  onRentDress: (dressName: string, imageUrl: string) => void;
   onBookHenna: (imageUrl: string) => void;
 }
 
-const hennaImages = [henna1, henna2, henna3, henna4, henna5];
-const dresses = [
-  { id: 1, name: "Royal Lace Wedding Gown", image: dress1, price: "$200/day" },
-  { id: 2, name: "Classic Pearl Dress", image: dress2, price: "$180/day" },
-  { id: 3, name: "Classic Groom Suit", image: dress3, price: "$150/day" },
-  { id: 4, name: "Modern Elegance Suit", image: dress4, price: "$160/day" },
-  { id: 5, name: "Princess Silhouette", image: dress5, price: "$250/day" },
-  { id: 6, name: "Crystal Embellished", image: dress6, price: "$280/day" },
-  { id: 7, name: "Satin Mermaid Dress", image: dress7, price: "$190/day" },
-  { id: 8, name: "Bohemian Chiffon", image: dress8, price: "$160/day" },
+const hennaImages = [
+  { img: henna1, label: "Bridal Full Hand", price: "$65" },
+  { img: henna2, label: "Intricate Arabic Design", price: "$45" },
+  { img: henna3, label: "Simple Floral Pattern", price: "$30" },
+  { img: henna4, label: "Traditional Somali Style", price: "$55" },
+  { img: henna5, label: "Minimalist Henna", price: "$25" },
 ];
 
-const BridalRentalsSection = ({ onRentDress, onBookHenna }: BridalRentalsSectionProps) => {
-  const [activeTab, setActiveTab] = useState<"dress" | "henna">("dress");
+const BridalRentalsSection = ({ onBookHenna }: BridalRentalsSectionProps) => {
+  const navigate = useNavigate();
 
   return (
-    <section id="bridal" className="py-24 bg-white overflow-hidden">
+    <section id="bridal" className="py-28 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#E87A5D]/10 rounded-full mb-6">
-            <Sparkles className="w-3.5 h-3.5 text-[#E87A5D]" />
-            <span className="text-[#E87A5D] text-[10px] font-bold uppercase tracking-widest">Bridal & Special Events</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-display font-medium text-[#112232] mb-6">
-            Henna Art & Wedding Dress Rentals
-          </h2>
-          <p className="max-w-2xl mx-auto text-gray-500 font-body leading-relaxed">
-            Discover our exquisite collection of premium wedding dresses available for rent, and explore our stunning intricate henna designs for your special day.
-          </p>
-        </motion.div>
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-20">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="max-w-3xl"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full mb-6">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span className="text-primary text-[10px] font-bold uppercase tracking-widest">Master Artistry</span>
+            </div>
+            <h2 className="text-5xl md:text-6xl font-display font-medium text-charcoal mb-8 leading-[1.1]">
+              Exquisite Henna <br />
+              <span className="text-primary font-serif italic italic-shadow">Art Designs</span>
+            </h2>
+            <p className="text-gray-500 font-body text-lg leading-relaxed max-w-xl">
+              From traditional bridal patterns to modern minimalist strokes, our master artists bring your vision to life with organic, rich-stain henna.
+            </p>
+          </motion.div>
 
-        {/* Custom Tabs */}
-        <div className="flex justify-center mb-12">
-          <div className="inline-flex bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
-            <button
-              onClick={() => setActiveTab("dress")}
-              className={`px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all ${
-                activeTab === "dress"
-                  ? "bg-white text-[#E87A5D] shadow-[0_4px_12px_rgb(0,0,0,0.05)]"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Dresses & Suits
-            </button>
-            <button
-              onClick={() => setActiveTab("henna")}
-              className={`px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all ${
-                activeTab === "henna"
-                  ? "bg-white text-[#E87A5D] shadow-[0_4px_12px_rgb(0,0,0,0.05)]"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Henna Gallery
-            </button>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col sm:flex-row gap-4 shrink-0 shadow-2xl shadow-gray-100 rounded-[2.5rem] bg-[#fdfbf7] p-8 border border-gray-100"
+          >
+             <div className="space-y-4">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Want to see Dresses?</p>
+                <h4 className="text-xl font-display font-bold text-charcoal pr-8">Premium Rental <br/>Collection</h4>
+                <button 
+                  onClick={() => navigate("/rentals")}
+                  className="bg-primary hover:bg-charcoal text-white px-8 py-3.5 rounded-2xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-all"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  View Rentals
+                </button>
+             </div>
+          </motion.div>
         </div>
 
-        {/* Content Container */}
-        <div className="min-h-[600px]">
-          <AnimatePresence mode="wait">
-            
-            {/* Dresses Tab Content */}
-            {activeTab === "dress" && (
-              <motion.div
-                key="dress"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
-              >
-                {dresses.map((dress) => (
-                  <div key={dress.id} className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300">
-                    <div className="aspect-[3/4] overflow-hidden relative bg-gray-50">
-                      <img 
-                        src={dress.image} 
-                        alt={dress.name} 
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" 
-                      />
-                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-bold text-[#112232] shadow-sm">
-                        {dress.price}
-                      </div>
-                    </div>
-                    <div className="p-6">
-                      <h3 className="font-display font-semibold text-lg text-[#112232] mb-4 truncate">{dress.name}</h3>
-                      <button 
-                        onClick={() => onRentDress(dress.name, dress.image)}
-                        className="w-full bg-gray-50 hover:bg-[#E87A5D] text-[#112232] hover:text-white py-3 rounded-xl font-bold text-xs tracking-wider transition-colors flex items-center justify-center gap-2 group/btn"
-                      >
-                        <ShoppingBag className="w-4 h-4" />
-                        <span>Rent This Dress</span>
-                      </button>
-                    </div>
+        {/* Masonry-style Gallery */}
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
+          {hennaImages.map((item, idx) => (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: idx * 0.1 }}
+              viewport={{ once: true }}
+              key={idx}
+              className="break-inside-avoid group relative rounded-[2.5rem] overflow-hidden bg-gray-50 border border-gray-100 shadow-sm"
+            >
+              <img 
+                src={item.img} 
+                alt={item.label} 
+                className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700" 
+              />
+              
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-8">
+                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                  <div className="flex justify-between items-end mb-4">
+                     <div>
+                        <h3 className="text-white font-display font-bold text-xl mb-1">{item.label}</h3>
+                        <p className="text-primary text-xs font-bold uppercase tracking-widest">Start from {item.price}</p>
+                     </div>
+                     <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white">
+                        <Eye className="w-5 h-5" />
+                     </div>
                   </div>
-                ))}
-              </motion.div>
-            )}
-
-            {/* Henna Tab Content */}
-            {activeTab === "henna" && (
-              <motion.div
-                key="henna"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="space-y-12"
-              >
-                <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-                  {hennaImages.map((img, idx) => (
-                    <div key={idx} className="break-inside-avoid group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300">
-                      <img 
-                        src={img} 
-                        alt={`Henna design ${idx + 1}`} 
-                        className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700" 
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                        <button 
-                          onClick={() => onBookHenna(img)}
-                          className="text-white hover:text-[#E87A5D] font-medium text-sm flex items-center gap-2 transition-colors"
-                        >
-                          Book this style <ArrowRight className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="flex justify-center">
                   <button 
-                    onClick={() => onBookHenna(henna1)}
-                    className="bg-[#112232] hover:bg-black text-white px-10 py-4 rounded-full font-bold tracking-wide transition-colors flex items-center gap-2 shadow-xl shadow-gray-200"
+                    onClick={() => onBookHenna(item.img)}
+                    className="w-full bg-white text-charcoal py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all shadow-xl shadow-black/20"
                   >
-                    <span>Book Henna Session</span>
-                    <Sparkles className="w-4 h-4" />
+                    Book This Style
                   </button>
                 </div>
-              </motion.div>
-            )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
 
-          </AnimatePresence>
+        {/* Bottom CTA */}
+        <div className="mt-20 flex flex-col items-center">
+           <div className="w-px h-16 bg-gradient-to-b from-primary/50 to-transparent mb-8"></div>
+           <button 
+             onClick={() => onBookHenna(henna1)}
+             className="inline-flex items-center gap-3 px-10 py-5 bg-charcoal text-white rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-black hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-gray-200"
+           >
+             Book a Private Session <ArrowRight className="w-4 h-4" />
+           </button>
         </div>
 
       </div>

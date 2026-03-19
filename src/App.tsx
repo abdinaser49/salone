@@ -9,6 +9,7 @@ import Index from "./pages/Index.tsx";
 import Login from "./pages/Login.tsx";
 import Signup from "./pages/Signup.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import Rentals from "./pages/Rentals.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
                 <Dashboard />
               </ProtectedRoute>
             } />
+            <Route path="/rentals" element={<Rentals />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
