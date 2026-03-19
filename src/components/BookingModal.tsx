@@ -15,6 +15,8 @@ const services = [
   { name: "Nail Artistry", price: 55, duration: "45–90 min", icon: "💅", description: "Manicure, pedicure & bespoke nail art", color: "from-rose-500/10 to-pink-500/10", border: "border-rose-200/50" },
   { name: "Facial Treatments", price: 120, duration: "60–90 min", icon: "🌿", description: "Rejuvenating facials with premium products", color: "from-emerald-500/10 to-teal-500/10", border: "border-emerald-200/50" },
   { name: "Body & Massage", price: 100, duration: "60–120 min", icon: "🌺", description: "Deep tissue, hot stone & aromatherapy", color: "from-amber-500/10 to-orange-500/10", border: "border-amber-200/50" },
+  { name: "Henna Art", price: 65, duration: "60–90 min", icon: "🌸", description: "Intricate bridal & party henna designs", color: "from-rose-500/10 to-yellow-500/10", border: "border-rose-200/50" },
+  { name: "Wedding Dress Rental", price: 200, duration: "1 day", icon: "👗", description: "Premium bridal and evening gowns", color: "from-blue-500/10 to-indigo-500/10", border: "border-blue-200/50" },
 ];
 
 const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
@@ -26,15 +28,31 @@ interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   preselectedService?: string;
+  selectedImage?: string;
 }
 
-const BookingModal = ({ isOpen, onClose, preselectedService }: BookingModalProps) => {
+const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: BookingModalProps) => {
   const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState("Beauty");
   const [selectedService, setSelectedService] = useState(
-    services.find(s => s.name === preselectedService) || services[0]
+    services[0]
   );
+
+  useEffect(() => {
+    if (preselectedService && isOpen) {
+      const found = services.find(s => s.name === preselectedService) || 
+                    (preselectedService.includes("Dress") || preselectedService.includes("Suit") ? services[5] : services[4]);
+      setSelectedService(found);
+      
+      // If it's a specific dress/suit name not in our static list, we might want to keep the name
+      if (!services.find(s => s.name === preselectedService)) {
+        if (preselectedService.includes("Dress") || preselectedService.includes("Suit")) {
+           setSelectedService({ ...services[5], name: preselectedService });
+        }
+      }
+    }
+  }, [preselectedService, isOpen]);
   const [selectedEmployee, setSelectedEmployee] = useState("Any");
   const [date, setDate] = useState<Date>(new Date());
   const [startTime, setStartTime] = useState("8:00 am");
@@ -69,7 +87,7 @@ const BookingModal = ({ isOpen, onClose, preselectedService }: BookingModalProps
 
   const handleConfirm = async () => {
     if (!user) {
-      toast.error("Error: You must be logged in to confirm a booking.");
+      toast.error("Waan ka xunnahay, waqti-gii (Session) waa dhacay. Fadlan dib isku diiwaangeli.");
       onClose();
       return;
     }
@@ -78,7 +96,9 @@ const BookingModal = ({ isOpen, onClose, preselectedService }: BookingModalProps
       client_id: user?.id,
       name: name,
       phone: phone,
-      service: selectedService.name,
+      service: selectedImage && (selectedService.name === "Wedding Dress Rental" || selectedService.name === "Henna Art") 
+                ? `${selectedService.name} (Selected Style)` 
+                : selectedService.name,
       booking_date: date ? format(date, "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd"),
       booking_time: startTime,
       status: "Pending Confirmation",
@@ -140,6 +160,8 @@ const BookingModal = ({ isOpen, onClose, preselectedService }: BookingModalProps
                       <option>Beauty</option>
                       <option>Hair</option>
                       <option>Nails</option>
+                      <option>Dress Rentals</option>
+                      <option>Henna</option>
                     </select>
                   </div>
                   <div className="space-y-1.5">
@@ -207,6 +229,14 @@ const BookingModal = ({ isOpen, onClose, preselectedService }: BookingModalProps
                       <span className="text-slate-500 text-sm">Selected treatment</span>
                       <span className="font-bold text-primary">{selectedService.name}</span>
                    </div>
+                   {selectedImage && (
+                     <div className="mb-4 flex flex-col gap-2">
+                        <span className="text-slate-500 text-sm">Selected style/item</span>
+                        <div className="w-24 h-24 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+                           <img src={selectedImage} className="w-full h-full object-cover" alt="Selected" />
+                        </div>
+                     </div>
+                   )}
                    <div className="flex justify-between mb-4">
                       <span className="text-slate-500 text-sm">Duration</span>
                       <span className="font-medium text-sm">{selectedService.duration}</span>
@@ -281,6 +311,14 @@ const BookingModal = ({ isOpen, onClose, preselectedService }: BookingModalProps
                         <span className="text-slate-500">Time</span>
                         <span className="font-bold text-slate-900">{startTime}</span>
                       </div>
+                      {selectedImage && (
+                        <div className="flex justify-between items-center pt-2">
+                           <span className="text-slate-500">Choice</span>
+                           <div className="w-10 h-10 rounded-lg overflow-hidden border border-slate-200">
+                             <img src={selectedImage} className="w-full h-full object-cover" alt="Choice" />
+                           </div>
+                        </div>
+                      )}
                    </div>
                 </div>
                 <button onClick={resetAndClose} className="bg-primary text-white px-12 py-4 rounded-full font-bold shadow-xl shadow-primary/30 hover:scale-105 transition-transform">

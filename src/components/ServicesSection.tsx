@@ -40,7 +40,7 @@ interface ServicesSectionProps {
 
 const ServicesSection = ({ onSelectService }: ServicesSectionProps) => {
   return (
-    <section id="services" className="py-24 bg-white overflow-hidden">
+    <section id="services" className="py-24 bg-[#fdfbf7] overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Header Section */}

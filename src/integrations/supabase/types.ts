@@ -55,6 +55,7 @@ export type Database = {
           booking_time: string
           status: string
           amount: number | null
+          image_url: string | null
           created_at: string
           updated_at: string
         }
@@ -68,6 +69,7 @@ export type Database = {
           booking_time: string
           status?: string
           amount?: number | null
+          image_url?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -81,6 +83,7 @@ export type Database = {
           booking_time?: string
           status?: string
           amount?: number | null
+          image_url?: string | null
           created_at?: string
           updated_at?: string
         }

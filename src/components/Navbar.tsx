@@ -50,27 +50,41 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
         <Link to="/" className="flex items-center gap-2 group">
           <img src={logo} alt="Qurux Dumar Logo" className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-110" />
           <span className={cn(
-            "font-display text-lg sm:text-2xl transition-colors drop-shadow-md",
-            scrolled ? "text-primary" : "text-white"
+            "font-display text-lg sm:text-2xl transition-colors drop-shadow-sm",
+            scrolled ? "text-primary" : "text-[#112232]"
           )}>Qurux Dumar</span>
         </Link>
 
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-8 font-body text-sm">
+          <div className="hidden md:flex items-center gap-7 lg:gap-8 font-body text-sm">
+            <button onClick={() => scrollTo("about")} className={cn(
+              "transition-colors font-medium text-[15px]",
+              scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
+            )}>About Us</button>
+
             <button onClick={() => scrollTo("services")} className={cn(
-              "transition-colors font-medium",
-              scrolled ? "text-foreground hover:text-primary" : "text-white hover:text-white/80"
+              "transition-colors font-medium text-[15px]",
+              scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
             )}>Services</button>
+
             <button onClick={() => scrollTo("team")} className={cn(
-              "transition-colors font-medium",
-              scrolled ? "text-foreground hover:text-primary" : "text-white hover:text-white/80"
+              "transition-colors font-medium text-[15px]",
+              scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
             )}>Team</button>
+
+            <button onClick={() => scrollTo("contact")} className={cn(
+              "transition-colors font-medium text-[15px]",
+              scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
+            )}>Contact</button>
+
+            {/* Added a vertical divider for auth links if needed */}
+            <div className="w-px h-4 bg-gray-300 mx-2 hidden lg:block" />
             {isAdmin ? (
               <Link
                 to="/dashboard"
                 className={cn(
-                  "flex items-center gap-2 transition-colors font-medium",
-                  scrolled ? "text-primary" : "text-white hover:text-white/80"
+                  "flex items-center gap-2 transition-colors font-semibold",
+                  scrolled ? "text-primary" : "text-gray-800 hover:text-[#E87A5D]"
                 )}
               >
                 <LayoutDashboard className="w-4 h-4" />
@@ -80,8 +94,8 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
               <Link
                 to="/login"
                 className={cn(
-                  "flex items-center gap-2 transition-colors font-medium",
-                  scrolled ? "text-foreground hover:text-primary" : "text-white hover:text-white/80"
+                  "flex items-center gap-2 transition-colors font-semibold",
+                  scrolled ? "text-foreground hover:text-primary" : "text-gray-800 hover:text-[#E87A5D]"
                 )}
               >
                 <LogIn className="w-4 h-4" />
@@ -93,10 +107,10 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
           <button
             onClick={onBookNow}
             className={cn(
-              "px-5 sm:px-8 py-2 sm:py-2.5 rounded-full text-[10px] sm:text-xs tracking-[0.2em] uppercase transition-all shadow-lg active:scale-95",
+              "px-5 sm:px-8 py-2 sm:py-2.5 rounded-full text-[10px] sm:text-xs tracking-[0.2em] uppercase transition-all shadow-md active:scale-95 font-bold",
               scrolled 
                 ? "bg-primary text-primary-foreground hover:bg-primary/90" 
-                : "bg-white text-primary hover:bg-white/90"
+                : "bg-[#E87A5D] text-white hover:bg-[#d66a4f]"
             )}
           >
             Book Now
@@ -106,7 +120,7 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
             onClick={() => setMobileOpen(!mobileOpen)} 
             className={cn(
               "md:hidden p-2 rounded-full transition-colors",
-              scrolled ? "text-primary hover:bg-primary/10" : "text-white hover:bg-white/10"
+              scrolled ? "text-primary hover:bg-primary/10" : "text-[#112232] hover:bg-black/5"
             )}
             aria-label="Toggle Menu"
           >
@@ -124,8 +138,10 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
             className="md:hidden bg-background border-b border-border overflow-hidden"
           >
             <div className="px-6 py-6 space-y-4 font-body text-sm">
+              <button onClick={() => scrollTo("about")} className="block w-full text-left py-2 font-medium hover:text-primary transition-colors">About Us</button>
               <button onClick={() => scrollTo("services")} className="block w-full text-left py-2 font-medium hover:text-primary transition-colors">Services</button>
               <button onClick={() => scrollTo("team")} className="block w-full text-left py-2 font-medium hover:text-primary transition-colors">Team</button>
+              <button onClick={() => scrollTo("contact")} className="block w-full text-left py-2 font-medium hover:text-primary transition-colors">Contact</button>
               
               {isAdmin ? (
                 <Link 

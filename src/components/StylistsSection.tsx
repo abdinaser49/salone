@@ -13,7 +13,7 @@ const stylists = [
 
 const StylistsSection = () => {
   return (
-    <section className="py-24 md:py-32 bg-white" id="team">
+    <section className="py-24 md:py-32 bg-[#fdfbf7]" id="team">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

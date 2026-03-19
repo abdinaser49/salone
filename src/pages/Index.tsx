@@ -4,30 +4,34 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import AboutUsSection from "@/components/AboutUsSection";
+import ContactSection from "@/components/ContactSection";
 import ServicesSection from "@/components/ServicesSection";
 import StylistsSection from "@/components/StylistsSection";
-import GallerySection from "@/components/GallerySection";
+import BridalRentalsSection from "@/components/BridalRentalsSection";
 import BookingModal from "@/components/BookingModal";
 import Footer from "@/components/Footer";
 
 const Index = () => {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [preselectedService, setPreselectedService] = useState<string>();
+  const [selectedImage, setSelectedImage] = useState<string>();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  const openBooking = (service?: string) => {
+  const openBooking = (service?: string, image?: string) => {
     if (loading) {
       toast.info("Please wait while we check your login status...");
       return;
     }
     
     if (!user) {
-      toast.error("You must be logged in to book an appointment.");
+      toast.error("Fadlan is diiwaangeli (Login/Register) si aad balan u qabato.");
       navigate("/login");
       return;
     }
     setPreselectedService(service);
+    setSelectedImage(image);
     setBookingOpen(true);
   };
 
@@ -35,16 +39,20 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar onBookNow={() => openBooking()} />
       <HeroSection onBookNow={() => openBooking()} />
+      <AboutUsSection />
       <ServicesSection onSelectService={(s) => openBooking(s)} />
-      <GallerySection />
-      <div id="team">
-        <StylistsSection />
-      </div>
+      <BridalRentalsSection 
+        onRentDress={(dress, img) => openBooking(dress, img)}
+        onBookHenna={(img) => openBooking("Henna Art", img)}
+      />
+      <StylistsSection />
+      <ContactSection />
       <Footer />
       <BookingModal
         isOpen={bookingOpen}
         onClose={() => setBookingOpen(false)}
         preselectedService={preselectedService}
+        selectedImage={selectedImage}
       />
     </div>
   );

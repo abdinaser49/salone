@@ -26,7 +26,7 @@ const statusColors: Record<string, string> = {
   "Pending": "bg-sky-100 text-sky-800 border-sky-200",
 };
 
-type Tab = "overview" | "appointments" | "finance" | "jobs" | "clients" | "settings";
+type Tab = "overview" | "appointments" | "finance" | "jobs" | "clients" | "settings" | "rentals";
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
@@ -36,7 +36,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [modalType, setModalType] = useState<"appointment" | "client" | "service" | "staff" | "payment" | null>(null);
+  const [modalType, setModalType] = useState<"appointment" | "client" | "service" | "staff" | "payment" | "rental" | null>(null);
   const [dbServices, setDbServices] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -46,7 +46,8 @@ const Dashboard = () => {
     time: "",
     amount: "",
     description: "",
-    duration: ""
+    duration: "",
+    image: ""
   });
 
   useEffect(() => {
@@ -206,12 +207,26 @@ const Dashboard = () => {
 
         if (error) throw error;
         toast.success("Service added successfully!");
+      } else if (modalType === 'rental') {
+        const { error } = await supabase
+          .from('services')
+          .insert([{
+            name: formData.name,
+            description: "Wedding Dress / Suit Rental",
+            price: parseFloat(formData.amount) || 0,
+            image_url: formData.image,
+            duration: "1 day",
+            category: "Dress"
+          }]);
+
+        if (error) throw error;
+        toast.success("Dress added to rentals list!");
       } else {
         // Mock success for other types until tables exist
         toast.success(`${modalType} added successfully (Preview)`);
       }
       setModalType(null);
-      setFormData({ name: "", phone: "", service: "", date: "", time: "", amount: "", description: "", duration: "" });
+      setFormData({ name: "", phone: "", service: "", date: "", time: "", amount: "", description: "", duration: "", image: "" });
       fetchBookings(); // Refresh list
       fetchServices();
     } catch (error: any) {
@@ -235,6 +250,7 @@ const Dashboard = () => {
     { id: "overview", label: "Dashboard", icon: LayoutDashboard },
     { id: "clients", label: "Customers", icon: Users },
     { id: "jobs", label: "Services", icon: Scissors },
+    { id: "rentals", label: "Dress Rentals", icon: Box },
     { id: "settings", label: "Staff", icon: UserPlus }, // Repurposed for menu matching
     { id: "appointments", label: "Appointments", icon: Calendar },
     { id: "finance", label: "Payments", icon: CreditCard },
@@ -903,6 +919,64 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
+
+            {/* Rentals */}
+            {activeTab === "rentals" && (
+              <div className="space-y-8 pb-10">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4">
+                  <div>
+                    <h1 className="font-display text-3xl tracking-tight text-charcoal mb-2">Dress Rentals</h1>
+                    <p className="text-primary font-body text-sm">Manage available dresses and suits</p>
+                  </div>
+                  <button onClick={() => setModalType('rental')} className="bg-primary text-primary-foreground px-6 py-3 rounded-2xl font-body text-sm flex items-center gap-2 hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+                     <Plus className="w-4 h-4" /> Add Dress
+                  </button>
+                </div>
+
+                <div className={cardStyles}>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-gray-100 bg-[#FAFAFA]">
+                          <th className="text-left p-6 font-body text-xs text-primary font-semibold uppercase tracking-wider">Image</th>
+                          <th className="text-left p-6 font-body text-xs text-primary font-semibold uppercase tracking-wider">Dress Name</th>
+                          <th className="text-center p-6 font-body text-xs text-primary font-semibold uppercase tracking-wider">Daily Price</th>
+                          <th className="text-center p-6 font-body text-xs text-primary font-semibold uppercase tracking-wider">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {dbServices.filter(s => s.category === 'Dress').length === 0 ? (
+                           <tr>
+                              <td colSpan={4} className="p-20 text-center text-primary/60 font-body">
+                                <div className="flex flex-col items-center justify-center gap-4">
+                                  <div className="p-6 bg-primary/5 rounded-full"><Box className="w-10 h-10 text-primary/40" /></div>
+                                  <p className="text-lg text-charcoal font-medium font-display">No dresses yet</p>
+                                  <p className="text-sm">Add a dress to display it to your users.</p>
+                                </div>
+                              </td>
+                           </tr>
+                        ) : dbServices.filter(s => s.category === 'Dress').map((dress, i) => (
+                          <tr key={i} className="border-b border-gray-50 last:border-0 hover:bg-primary/[0.02] transition-colors group">
+                            <td className="p-6">
+                              <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
+                                {dress.image_url ? <img src={dress.image_url} className="w-full h-full object-cover" alt="Dress" /> : <Box className="w-full h-full p-3 text-gray-300" />}
+                              </div>
+                            </td>
+                            <td className="p-6 font-body text-sm font-semibold text-charcoal">{dress.name}</td>
+                            <td className="p-6 text-center font-bold text-primary text-base">${dress.price}</td>
+                            <td className="p-6 text-center">
+                              <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => deleteService(dress.id)} className="p-2 text-zinc-400 hover:text-rose-500 transition-colors hover:bg-rose-50 rounded-xl"><Trash2 className="w-4 h-4" /></button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
              {/* Clients */}
             {activeTab === "clients" && (
               <div className="space-y-8 pb-10">
@@ -1115,6 +1189,13 @@ const Dashboard = () => {
                      <input className="w-full p-4 bg-[#FAFAFA] rounded-2xl text-sm font-body border-2 border-transparent focus:border-primary/20 focus:bg-white transition-all outline-none" placeholder="Client Name" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
                      <input type="number" className="w-full p-4 bg-[#FAFAFA] rounded-2xl text-sm font-body border-2 border-transparent focus:border-primary/20 focus:bg-white transition-all outline-none" placeholder="Amount ($)" required value={formData.amount} onChange={(e) => setFormData({...formData, amount: e.target.value})} />
                      <input className="w-full p-4 bg-[#FAFAFA] rounded-2xl text-sm font-body border-2 border-transparent focus:border-primary/20 focus:bg-white transition-all outline-none" placeholder="Payment Method (e.g., Cash, Card)" />
+                  </>
+                )}
+                {modalType === 'rental' && (
+                  <>
+                     <input className="w-full p-4 bg-[#FAFAFA] rounded-2xl text-sm font-body border-2 border-transparent focus:border-primary/20 focus:bg-white transition-all outline-none" placeholder="Dress or Suit Name" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+                     <input type="number" className="w-full p-4 bg-[#FAFAFA] rounded-2xl text-sm font-body border-2 border-transparent focus:border-primary/20 focus:bg-white transition-all outline-none" placeholder="Price Per Day ($)" required value={formData.amount} onChange={(e) => setFormData({...formData, amount: e.target.value})} />
+                     <input className="w-full p-4 bg-[#FAFAFA] rounded-2xl text-sm font-body border-2 border-transparent focus:border-primary/20 focus:bg-white transition-all outline-none" placeholder="Image URL (e.g., https://.../dress.jpg)" value={formData.image} onChange={(e) => setFormData({...formData, image: e.target.value})} />
                   </>
                 )}
                 <button type="submit" className="w-full bg-primary text-white p-4 rounded-2xl font-bold font-body mt-2 hover:bg-primary/90 transition-transform active:scale-95 shadow-lg shadow-primary/20">
