@@ -72,7 +72,7 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
                scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
             )}>Services</button>
 
-            <button onClick={() => scrollTo("team")} className={cn(
+            <button onClick={() => navigate("/team")} className={cn(
                "transition-colors font-medium text-[15px]",
                scrolled ? "text-foreground hover:text-primary" : "text-[#112232] hover:text-[#E87A5D]"
             )}>Team</button>
@@ -139,7 +139,7 @@ const Navbar = ({ onBookNow }: NavbarProps) => {
           <button onClick={() => navigate("/rentals")} className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.15em] text-charcoal opacity-80 active:text-primary">Rentals</button>
           <button onClick={() => scrollTo("services")} className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.15em] text-charcoal opacity-80 active:text-primary">Services</button>
           <button onClick={() => scrollTo("about")} className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.15em] text-charcoal opacity-80 active:text-primary">About</button>
-          <button onClick={() => scrollTo("team")} className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.15em] text-charcoal opacity-80 active:text-primary">Team</button>
+          <button onClick={() => navigate("/team")} className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.15em] text-charcoal opacity-80 active:text-primary">Team</button>
           <button onClick={() => navigate("/contact")} className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.15em] text-charcoal opacity-80 active:text-primary">Contact</button>
       </div>
 

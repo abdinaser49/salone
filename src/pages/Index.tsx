@@ -44,7 +44,6 @@ const Index = () => {
       <BridalRentalsSection 
         onBookHenna={(img) => openBooking("Henna Art", img)}
       />
-      <StylistsSection />
       <ContactSection />
       <Footer />
       <BookingModal
