@@ -10,6 +10,7 @@ import ServicesSection from "@/components/ServicesSection";
 import StylistsSection from "@/components/StylistsSection";
 import BridalRentalsSection from "@/components/BridalRentalsSection";
 import BookingModal from "@/components/BookingModal";
+import SupportSection from "@/components/SupportSection";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -44,6 +45,7 @@ const Index = () => {
       <BridalRentalsSection 
         onBookHenna={(img) => openBooking("Henna Art", img)}
       />
+      <SupportSection />
       <Footer />
       <BookingModal
         isOpen={bookingOpen}
