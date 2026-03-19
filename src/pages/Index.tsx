@@ -49,7 +49,11 @@ const Index = () => {
       <Footer />
       <BookingModal
         isOpen={bookingOpen}
-        onClose={() => setBookingOpen(false)}
+        onClose={() => {
+          setBookingOpen(false);
+          setPreselectedService(undefined);
+          setSelectedImage(undefined);
+        }}
         preselectedService={preselectedService}
         selectedImage={selectedImage}
       />

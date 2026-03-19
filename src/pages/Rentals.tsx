@@ -177,7 +177,11 @@ const Rentals = () => {
 
       <BookingModal 
         isOpen={bookingOpen}
-        onClose={() => setBookingOpen(false)}
+        onClose={() => {
+          setBookingOpen(false);
+          setSelectedDress(undefined);
+          setSelectedImage(undefined);
+        }}
         preselectedService={selectedDress}
         selectedImage={selectedImage}
       />
