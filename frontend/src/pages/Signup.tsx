@@ -49,8 +49,8 @@ const Signup = () => {
     }
 
     setLoading(false);
-    toast.success("Account created! You can now book appointments.");
-    navigate("/");
+    toast.success("Account created! You can now access your dashboard.");
+    navigate("/dashboard");
   };
 
   return (
