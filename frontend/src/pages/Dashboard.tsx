@@ -37,7 +37,15 @@ type Tab = "overview" | "appointments" | "finance" | "jobs" | "clients" | "setti
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const activeEmail = user?.email || "";
+  const isAdmin = activeEmail && import.meta.env.VITE_ADMIN_EMAILS?.includes(activeEmail);
+  const [activeTab, setActiveTab] = useState<Tab>(isAdmin ? "overview" : "appointments");
+
+  useEffect(() => {
+    if (!isAdmin && ["overview", "jobs", "settings", "reports"].includes(activeTab)) {
+      setActiveTab("appointments");
+    }
+  }, [isAdmin, activeTab]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [bookings, setBookings] = useState<any[]>([]);
@@ -418,7 +426,7 @@ const Dashboard = () => {
   };
 
   // Modern UI colors matching the brand
-  const navItems: { id: Tab; label: string; icon: any }[] = [
+  const navItems: { id: Tab; label: string; icon: any }[] = isAdmin ? [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "clients", label: "Customers", icon: Users },
     { id: "jobs", label: "Services", icon: Scissors },
@@ -427,6 +435,11 @@ const Dashboard = () => {
     { id: "appointments", label: "Appointments", icon: Calendar },
     { id: "finance", label: "Payments", icon: CreditCard },
     { id: "reports", label: "Reports", icon: TrendingUp },
+  ] : [
+    { id: "appointments", label: "Appointments", icon: Calendar },
+    { id: "clients", label: "Customers", icon: Users },
+    { id: "finance", label: "Payments", icon: CreditCard },
+    { id: "rentals", label: "Dress Rentals", icon: Box },
   ];
 
   const sidebarStyles = "fixed lg:static inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-[#6D1B4B] to-[#4A0E32] text-white transform transition-transform duration-500 ease-in-out lg:translate-x-0 shadow-2xl overflow-hidden";
@@ -602,8 +615,8 @@ const Dashboard = () => {
             </button>
             <div className="flex items-center gap-3 pl-4 border-l border-zinc-100">
               <div className="text-right hidden md:block">
-                <p className="text-xs font-bold text-zinc-900">{user?.user_metadata?.full_name || "Admin"}</p>
-                <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Manager</p>
+                <p className="text-xs font-bold text-zinc-900">{user?.user_metadata?.full_name || (isAdmin ? "Admin" : "Cashier")}</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">{isAdmin ? "Manager" : "Staff / Cashier"}</p>
               </div>
               <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-sm shadow-md">
                 {user?.user_metadata?.full_name?.[0] || user?.email?.[0]?.toUpperCase() || "A"}
