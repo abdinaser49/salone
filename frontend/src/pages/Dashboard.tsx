@@ -1008,41 +1008,6 @@ const Dashboard = () => {
                   </div>
                   <div className="flex gap-3">
                     <button 
-                      onClick={async () => {
-                        if(window.confirm("Ma rabtaa inaad soo xareyso dhamaan dharka (Dirac & Gowns) oo ku jira online-ka?")) {
-                          const supabaseBaseUrl = "https://zimvwvxwvykdxrkmtaqv.supabase.co/storage/v1/object/public/services/";
-                          const defaultRentals = [
-                            { name: "Luxury Somali Dirac", image_url: `${supabaseBaseUrl}dirac.jpg`, price: 15, category: "Dress", duration: "1 day", description: "Somali Style" },
-                            { name: "Traditional Bridal Dirac", image_url: `${supabaseBaseUrl}dirac1.jpg`, price: 15, category: "Dress", duration: "1 day", description: "Classic" },
-                            { name: "Modern Pattern Dirac", image_url: `${supabaseBaseUrl}dirac2.jpg`, price: 15, category: "Dress", duration: "1 day", description: "New" },
-                            { name: "Elegant Evening Dirac", image_url: `${supabaseBaseUrl}dirac5.jpg`, price: 15, category: "Dress", duration: "1 day", description: "Trending" },
-                            { name: "Royal Silk Dirac", image_url: `${supabaseBaseUrl}dirac6.jpg`, price: 15, category: "Dress", duration: "1 day", description: "Premium" },
-                            { name: "Royal Lace Wedding Gown", image_url: `${supabaseBaseUrl}Weddin1.jpg`, price: 200, category: "Dress", duration: "1 day", description: "Hot" },
-                            { name: "Classic Pearl Dress", image_url: `${supabaseBaseUrl}Weddin2.jpg`, price: 180, category: "Dress", duration: "1 day", description: "Elegant" },
-                            { name: "Classic Groom Suit", image_url: `${supabaseBaseUrl}suit.jpg`, price: 150, category: "Dress", duration: "1 day", description: "New" },
-                            { name: "Modern Elegance Suit", image_url: `${supabaseBaseUrl}suit1.jpg`, price: 160, category: "Dress", duration: "1 day", description: "Premium" },
-                            { name: "Princess Silhouette", image_url: `${supabaseBaseUrl}dress2.jpg`, price: 250, category: "Dress", duration: "1 day", description: "Luxury" },
-                            { name: "Crystal Embellished", image_url: `${supabaseBaseUrl}dress3.jpg`, price: 280, category: "Dress", duration: "1 day", description: "Exclusive" },
-                            { name: "Satin Mermaid Dress", image_url: `${supabaseBaseUrl}dress4.jpg`, price: 190, category: "Dress", duration: "1 day", description: "Classic" },
-                            { name: "Bohemian Chiffon", image_url: `${supabaseBaseUrl}dress5.jpg`, price: 160, category: "Dress", duration: "1 day", description: "Trending" },
-                          ];
-                          
-                          try {
-                            const { error } = await supabase.from('services').insert(defaultRentals);
-                            if (error) throw error;
-                            toast.success("Hambalyo! Dhamaan collection-ka waa la soo xareeyay.");
-                            fetchServices();
-                          } catch (e: any) {
-                            toast.error("Xogta lama soo xareyn karo: " + e.message);
-                          }
-                        }
-                      }}
-                      className="bg-zinc-900 text-white px-6 py-3 rounded-2xl font-body text-sm flex items-center gap-2 hover:bg-zinc-800 transition-all shadow-lg active:scale-95"
-                    >
-                      <Sparkles className="w-4 h-4 text-emerald-400" />
-                      Import Online Data
-                    </button>
-                    <button 
                       onClick={() => setModalType('rental')} 
                       className="bg-primary text-primary-foreground px-6 py-3 rounded-2xl font-body text-sm flex items-center gap-2 hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95"
                     >
