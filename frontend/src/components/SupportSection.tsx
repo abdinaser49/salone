@@ -3,7 +3,7 @@ import { MessageCircle, Zap, ShieldCheck, HeartPulse } from "lucide-react";
 
 const SupportSection = () => {
   const openWhatsApp = () => {
-    const phoneNumber = "252614498649";
+    const phoneNumber = "252617643394";
     const message = "Hello! I have a question about your services and would like to chat with an expert.";
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, "_blank");
   };

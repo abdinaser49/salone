@@ -91,7 +91,7 @@ const AboutUsSection = () => {
                  </div>
                  <div>
                    <p className="text-xs text-gray-500 mb-0.5 font-medium uppercase tracking-wider">Contact Us</p>
-                   <p className="text-lg font-bold text-[#E87A5D]">+252 61 555 1234</p>
+                   <p className="text-lg font-bold text-[#E87A5D]">+252 61 7643394</p>
                  </div>
               </div>
             </div>

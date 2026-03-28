@@ -54,7 +54,7 @@ A powerful back-end (Dashboard) allows the salon owners to manage the entire bus
 
 ## ✅ Launch Readiness Check
 - [x] English labels verified across 100% of the site.
-- [x] WhatsApp button tested and linked to +252 61 4498649.
+- [x] WhatsApp button tested and linked to +252 61 7643394.
 - [x] Booking Modal accessible only to authorized users.
 - [x] Mobile horizontal navigation verified.
 - [x] Team and Contact pages successfully decoupled from Homepage.

@@ -56,6 +56,7 @@ export type Database = {
           status: string
           amount: number | null
           image_url: string | null
+          category: string | null
           created_at: string
           updated_at: string
         }
@@ -70,6 +71,7 @@ export type Database = {
           status?: string
           amount?: number | null
           image_url?: string | null
+          category?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -84,6 +86,7 @@ export type Database = {
           status?: string
           amount?: number | null
           image_url?: string | null
+          category?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -120,6 +123,75 @@ export type Database = {
           duration?: string | null
           image_url?: string | null
           category?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      staff: {
+        Row: {
+          id: string
+          name: string
+          role: string | null
+          phone: string | null
+          email: string | null
+          status: string | null
+          avatar_url: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          role?: string | null
+          phone?: string | null
+          email?: string | null
+          status?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          role?: string | null
+          phone?: string | null
+          email?: string | null
+          status?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      customers: {
+        Row: {
+          id: string
+          name: string
+          phone: string | null
+          email: string | null
+          total_visits: number | null
+          total_spent: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          phone?: string | null
+          email?: string | null
+          total_visits?: number | null
+          total_spent?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          phone?: string | null
+          email?: string | null
+          total_visits?: number | null
+          total_spent?: number | null
           created_at?: string
           updated_at?: string
         }

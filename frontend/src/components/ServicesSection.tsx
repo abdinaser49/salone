@@ -1,37 +1,25 @@
 import { motion } from "framer-motion";
 import { Scissors, Sparkles, Hand, Leaf, Bath, Flower2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-const services = [
-  { 
-    name: "Haircut & Styling", 
-    description: "Professional cutting, coloring, and styling services tailored to your face shape and personal style.", 
-    icon: Scissors 
-  },
-  { 
-    name: "Makeup", 
-    description: "Expert makeup application for weddings, parties, and special events using premium products.", 
-    icon: Sparkles 
-  },
-  { 
-    name: "Manicure & Pedicure", 
-    description: "Complete hand and foot care including nail shaping, cuticle treatment, and artistic polishing.", 
-    icon: Hand 
-  },
-  { 
-    name: "Skin Care", 
-    description: "Rejuvenating facial treatments designed to restore your skin's natural glow and hydration.", 
-    icon: Leaf 
-  },
-  { 
-    name: "Body Treatment", 
-    description: "Full body exfoliation and nourishment for smooth, healthy-looking skin all year round.", 
-    icon: Bath 
-  },
-  { 
-    name: "Massage", 
-    description: "Relaxing body therapy to reduce stress, tension, and promote overall physical well-being.", 
-    icon: Flower2
-  },
+const iconMap: Record<string, any> = {
+  "Hair": Scissors,
+  "Makeup": Sparkles,
+  "Nails": Hand,
+  "Skin": Leaf,
+  "Body": Bath,
+  "Massage": Flower2,
+  "Henna": Sparkles
+};
+
+const defaultServices = [
+  { name: "Haircut & Styling", description: "Professional cutting, coloring, and styling services.", icon_name: "Hair" },
+  { name: "Makeup", description: "Expert makeup application for weddings and parties.", icon_name: "Makeup" },
+  { name: "Manicure & Pedicure", description: "Complete hand and foot care services.", icon_name: "Nails" },
+  { name: "Skin Care", description: "Rejuvenating facial treatments.", icon_name: "Skin" },
+  { name: "Body Treatment", description: "Full body exfoliation and nourishment.", icon_name: "Body" },
+  { name: "Massage", description: "Relaxing body therapy for stress reduction.", icon_name: "Massage" },
 ];
 
 interface ServicesSectionProps {
@@ -39,6 +27,35 @@ interface ServicesSectionProps {
 }
 
 const ServicesSection = ({ onSelectService }: ServicesSectionProps) => {
+  const [dbServices, setDbServices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('services')
+          .select('*')
+          .neq('category', 'Dress')
+          .neq('category', 'Henna')
+          .order('name', { ascending: true });
+
+        if (error) throw error;
+        setDbServices(data && data.length > 0 ? data : defaultServices);
+      } catch (err) {
+        console.error("Error fetching services:", err);
+        setDbServices(defaultServices);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  const getIcon = (item: any) => {
+    const IconComponent = iconMap[item.icon_name] || iconMap[Object.keys(iconMap).find(k => item.name.includes(k)) || "Sparkles"];
+    return <IconComponent className="w-10 h-10 stroke-[1.5px]" />;
+  };
   return (
     <section id="services" className="py-24 bg-[#fdfbf7] overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
@@ -69,7 +86,7 @@ const ServicesSection = ({ onSelectService }: ServicesSectionProps) => {
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 border-t border-l border-slate-100">
-          {services.map((service, i) => (
+          {dbServices.map((service, i) => (
             <motion.div
               key={service.name}
               initial={{ opacity: 0 }}
@@ -86,7 +103,7 @@ const ServicesSection = ({ onSelectService }: ServicesSectionProps) => {
             >
               <div className="flex flex-col items-center justify-center space-y-6">
                 <div className="w-16 h-16 rounded-full flex items-center justify-center text-[#e91e63] transition-transform duration-500 group-hover:scale-110">
-                  <service.icon className="w-10 h-10 stroke-[1.5px]" />
+                  {getIcon(service)}
                 </div>
                 
                 <h3 className="font-serif text-2xl text-slate-800 font-medium group-hover:text-[#e91e63] transition-colors">

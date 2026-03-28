@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
-// Service Images
+// Service Images (Fallback)
 import hairImg from "@/assets/hair.jpg";
 import nailImg from "@/assets/Nail Art1.jpg";
 import facialImg from "@/assets/makeup.jpg";
@@ -84,7 +84,7 @@ const services = [
 
 const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
 
-const PAYMENT_MERCHANT = "614498649";
+const PAYMENT_MERCHANT = "617643394";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -107,6 +107,7 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [paid, setPaid] = useState(false);
+  const [dbServices, setDbServices] = useState<any[]>(services);
 
   useEffect(() => {
     if (user) {
@@ -116,17 +117,59 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
   }, [user]);
 
   useEffect(() => {
-    if (preselectedService && isOpen) {
-       const found = services.find(s => s.name === preselectedService) || 
-                     (preselectedService.toLowerCase().includes("dirac") ? services[5] : services[4]);
-       setSelectedService(found);
-       setSelectedCategoryId(found.category);
+    const fetchServices = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('services')
+          .select('*');
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+           const formatted = data.map((d: any) => {
+              let catId = "beauty";
+              if (d.category === "Dress") catId = "rentals";
+              else if (d.category === "Henna") catId = "henna";
+              else if (d.name.toLowerCase().includes("hair")) catId = "hair";
+              else if (d.name.toLowerCase().includes("nail") || d.name.toLowerCase().includes("manicure") || d.name.toLowerCase().includes("pedicure")) catId = "nails";
+              
+              return {
+                 id: d.id,
+                 category: catId,
+                 name: d.name,
+                 price: d.price,
+                 duration: d.duration || "60 min",
+                 image: d.image_url || ((catId === "rentals") ? rentalHero : facialImg)
+              }
+           });
+           setDbServices(formatted);
+        }
+      } catch (err) {
+        console.error("Error fetching services for modal:", err);
+      }
+    };
+    if (isOpen) {
+       fetchServices();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (preselectedService && isOpen && dbServices.length > 0) {
+       let found = dbServices.find(s => s.name === preselectedService);
+       if (!found) {
+         // Fallback map
+         found = dbServices.find(s => preselectedService.toLowerCase().includes("dirac") && s.category === "rentals") || 
+                 dbServices.find(s => s.category === "henna") || dbServices[0];
+       }
+       if (found) {
+         setSelectedService(found);
+         setSelectedCategoryId(found.category);
+       }
        if (selectedImage) setLocalSelectedImage(selectedImage);
        setStep(2); // Jump straight to time selection!
     } else if (!isOpen) {
        setStep(1); // Reset to step 1 when closed
     }
-  }, [preselectedService, isOpen, selectedImage]);
+  }, [preselectedService, isOpen, selectedImage, dbServices]);
 
   const resetAndClose = () => {
     setStep(1);
@@ -149,7 +192,7 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
   });
 
   const filteredServices = selectedCategoryId 
-    ? services.filter(s => s.category === selectedCategoryId)
+    ? dbServices.filter(s => s.category === selectedCategoryId)
     : [];
 
   const handleConfirm = async () => {
@@ -170,14 +213,10 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
       booking_time: startTime,
       status: "Pending Confirmation",
       amount: selectedService.price,
-      image_url: localSelectedImage, // Removed from actual DB call if column missing, but kept for future use if we add it
     };
 
-    // Remove image_url before inserting if it causes issues, but the prompt says it is missing
-    const { image_url, ...dbBookingData } = bookingData;
-
     try {
-      const { data, error } = await supabase.from('bookings').insert([dbBookingData]).select();
+      const { data, error } = await supabase.from('bookings').insert([bookingData]).select();
       if (error) throw error;
       setStep(5);
       toast.success("Appointment booked!");

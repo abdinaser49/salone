@@ -1,8 +1,15 @@
 import { motion } from "framer-motion";
 import { MessageSquare } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 const WhatsAppButton = () => {
-  const phoneNumber = "252614498649"; // Normalized number from context
+  const location = useLocation();
+  const phoneNumber = "252617643394"; // Normalized number from context
+
+  // Hide button on dashboard
+  if (location.pathname.startsWith("/dashboard")) {
+    return null;
+  }
   const message = "Hello Qurux Dumar! I would like to inquire about your services.";
   const encodedMessage = encodeURIComponent(message);
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;

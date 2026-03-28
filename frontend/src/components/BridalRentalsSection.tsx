@@ -13,7 +13,10 @@ interface BridalRentalsSectionProps {
   onBookHenna: (imageUrl: string) => void;
 }
 
-const hennaImages = [
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+const defaultHenna = [
   { img: henna1, label: "Bridal Full Hand", price: "$65" },
   { img: henna2, label: "Intricate Arabic Design", price: "$45" },
   { img: henna3, label: "Simple Floral Pattern", price: "$30" },
@@ -23,6 +26,31 @@ const hennaImages = [
 
 const BridalRentalsSection = ({ onBookHenna }: BridalRentalsSectionProps) => {
   const navigate = useNavigate();
+  const [dbHenna, setDbHenna] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHenna = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('services')
+          .select('*')
+          .eq('category', 'Henna')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setDbHenna(data && data.length > 0 ? data.map(i => ({ img: i.image_url, label: i.name, price: `$${i.price}` })) : defaultHenna);
+      } catch (err) {
+        console.error("Error fetching henna:", err);
+        setDbHenna(defaultHenna);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHenna();
+  }, []);
+
+  const hennaImages = dbHenna;
 
   return (
     <section id="bridal" className="py-28 bg-white overflow-hidden">
