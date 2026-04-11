@@ -9,9 +9,7 @@ import henna3 from "@/assets/henna2.jpg";
 import henna4 from "@/assets/henna3.jpg";
 import henna5 from "@/assets/henna4.jpg";
 
-interface BridalRentalsSectionProps {
-  onBookHenna: (imageUrl: string) => void;
-}
+interface BridalRentalsSectionProps {}
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +22,7 @@ const defaultHenna = [
   { img: henna5, label: "Minimalist Henna", price: "$25" },
 ];
 
-const BridalRentalsSection = ({ onBookHenna }: BridalRentalsSectionProps) => {
+const BridalRentalsSection = () => {
   const navigate = useNavigate();
   const [dbHenna, setDbHenna] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,35 +115,21 @@ const BridalRentalsSection = ({ onBookHenna }: BridalRentalsSectionProps) => {
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-8">
                 <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                   <div className="flex justify-between items-end mb-4">
-                     <div>
+                      <div>
                         <h3 className="text-white font-display font-bold text-xl mb-1">{item.label}</h3>
-                        <p className="text-primary text-xs font-bold uppercase tracking-widest">Start from {item.price}</p>
                      </div>
                      <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white">
                         <Eye className="w-5 h-5" />
                      </div>
                   </div>
-                  <button 
-                    onClick={() => onBookHenna(item.img)}
-                    className="w-full bg-white text-charcoal py-4 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all shadow-xl shadow-black/20"
-                  >
-                    Book This Style
-                  </button>
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Bottom CTA */}
+        {/* Bottom spacer instead of CTA */}
         <div className="mt-20 flex flex-col items-center">
-           <div className="w-px h-16 bg-gradient-to-b from-primary/50 to-transparent mb-8"></div>
-           <button 
-             onClick={() => onBookHenna(henna1)}
-             className="inline-flex items-center gap-3 px-10 py-5 bg-charcoal text-white rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-black hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-gray-200"
-           >
-             Book a Private Session <ArrowRight className="w-4 h-4" />
-           </button>
         </div>
 
       </div>

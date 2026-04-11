@@ -46,6 +46,7 @@ const Rentals = () => {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [selectedDress, setSelectedDress] = useState<string>();
   const [selectedImage, setSelectedImage] = useState<string>();
+  const [selectedId, setSelectedId] = useState<string | number>();
   const [rentalList, setRentalList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -76,7 +77,7 @@ const Rentals = () => {
     fetchRentals();
   }, []);
 
-  const openBooking = (name?: string, img?: string) => {
+  const openBooking = (name?: string, img?: string, id?: string | number) => {
     if (authLoading) return;
     if (!user) {
       toast.error("Please login or register to book an appointment.");
@@ -85,6 +86,7 @@ const Rentals = () => {
     }
     setSelectedDress(name);
     setSelectedImage(img);
+    setSelectedId(id);
     setBookingOpen(true);
   };
 
@@ -159,7 +161,7 @@ const Rentals = () => {
                 </button>
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-8">
                    <button 
-                     onClick={() => openBooking(dress.name, dress.image_url)}
+                     onClick={() => openBooking(dress.name, dress.image_url, dress.id)}
                      className="w-full bg-white text-zinc-900 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition-all transform translate-y-4 group-hover:translate-y-0 duration-500"
                    >
                      <ShoppingBag className="w-4 h-4" />
@@ -212,6 +214,7 @@ const Rentals = () => {
         dressName={selectedDress}
         dressImage={selectedImage}
         dressPrice={rentalList.find(d => d.name === selectedDress)?.price}
+        dressId={selectedId}
       />
     </div>
   );

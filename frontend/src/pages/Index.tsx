@@ -42,9 +42,7 @@ const Index = () => {
       <HeroSection onBookNow={() => openBooking()} />
       <AboutUsSection />
       <ServicesSection onSelectService={(s) => openBooking(s)} />
-      <BridalRentalsSection 
-        onBookHenna={(img) => openBooking("Henna Art", img)}
-      />
+      <BridalRentalsSection />
       <Footer />
       <BookingModal
         isOpen={bookingOpen}

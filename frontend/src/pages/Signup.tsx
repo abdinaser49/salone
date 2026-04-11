@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react";
 import heroImage from "@/assets/hero-salon.jpg";
 import logo from "@/assets/logo.png";
 
@@ -15,6 +15,8 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
+  const [otp, setOtp] = useState("");
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,8 +51,56 @@ const Signup = () => {
     }
 
     setLoading(false);
-    toast.success("Account created! You can now access your dashboard.");
-    navigate("/dashboard");
+    
+    // If session exists immediately, email confirmation is disabled/waived.
+    if (data.session) {
+      toast.success("Account created successfully!");
+      navigate("/");
+    } else {
+      toast.success("Verification code sent to your email!");
+      setShowOtp(true);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otp.trim()) return;
+    
+    setLoading(true);
+    const { error } = await supabase.auth.verifyOtp({
+      email: email.trim(),
+      token: otp.trim(),
+      type: 'signup'
+    });
+
+    if (error) {
+      toast.error(error.message);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+    toast.success("Account verified successfully!");
+    navigate("/");
+  };
+
+  const handleResendOtp = async () => {
+    if (!email.trim()) return;
+    setLoading(true);
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email.trim(),
+      options: {
+        emailRedirectTo: window.location.origin
+      }
+    });
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Verification code resent to your email!");
+    }
+    setLoading(false);
   };
 
   return (
@@ -81,84 +131,140 @@ const Signup = () => {
             <Link to="/" className="inline-block active:scale-95 transition-transform mb-6">
               <img src={logo} alt="Logo" className="h-20 w-auto" />
             </Link>
-            <h1 className="font-display text-3xl mb-2">Create Account</h1>
-            <p className="text-muted-foreground font-body text-sm">Fill in your information below</p>
+            {!showOtp ? (
+              <>
+                <h1 className="font-display text-3xl mb-2">Create Account</h1>
+                <p className="text-muted-foreground font-body text-sm">Fill in your information below</p>
+              </>
+            ) : (
+              <>
+                <h1 className="font-display text-3xl mb-2">Verify Email</h1>
+                <p className="text-muted-foreground font-body text-sm">Enter the OTP sent to {email}</p>
+              </>
+            )}
           </div>
 
-          <form onSubmit={handleSignup} className="space-y-4">
-            <div>
-              <label className="block font-body text-sm mb-1.5 text-muted-foreground">Full Name</label>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors"
-                placeholder="Your full name"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block font-body text-sm mb-1.5 text-muted-foreground">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block font-body text-sm mb-1.5 text-muted-foreground">Phone Number</label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors"
-                placeholder="e.g. 0612345678"
-              />
-            </div>
-
-            <div>
-              <label className="block font-body text-sm mb-1.5 text-muted-foreground">Password</label>
-              <div className="relative">
+          {!showOtp ? (
+            <form onSubmit={handleSignup} className="space-y-4">
+              <div>
+                <label className="block font-body text-sm mb-1.5 text-muted-foreground">Full Name</label>
                 <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors pr-10"
-                  placeholder="At least 6 characters"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors"
+                  placeholder="Your full name"
                   required
-                  minLength={6}
                 />
+              </div>
+
+              <div>
+                <label className="block font-body text-sm mb-1.5 text-muted-foreground">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors"
+                  placeholder="you@example.com"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block font-body text-sm mb-1.5 text-muted-foreground">Phone Number</label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors"
+                  placeholder="e.g. 0612345678"
+                />
+              </div>
+
+              <div>
+                <label className="block font-body text-sm mb-1.5 text-muted-foreground">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors pr-10"
+                    placeholder="At least 6 characters"
+                    required
+                    minLength={6}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-primary text-primary-foreground py-3 font-body text-sm tracking-[0.15em] uppercase disabled:opacity-50 hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+              >
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                Sign up
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <div>
+                <label className="block font-body text-sm mb-1.5 text-muted-foreground">OTP Code</label>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors text-center tracking-widest text-lg"
+                  placeholder="Enter 6-digit OTP"
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-primary text-primary-foreground py-3 font-body text-sm tracking-[0.15em] uppercase disabled:opacity-50 hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+                >
+                  {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Verify & Continue
+                </button>
+
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={handleResendOtp}
+                  disabled={loading}
+                  className="w-full py-2 font-body text-sm text-primary uppercase hover:underline transition-all"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  Send code again
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => setShowOtp(false)}
+                  className="w-full py-3 mt-2 font-body text-sm text-muted-foreground uppercase flex items-center justify-center gap-2 hover:text-foreground transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back to Signup
                 </button>
               </div>
-            </div>
+            </form>
+          )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-primary text-primary-foreground py-3 font-body text-sm tracking-[0.15em] uppercase disabled:opacity-50 hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
-            >
-              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              Sign up
-            </button>
-          </form>
-
-          <p className="mt-6 text-center font-body text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link to="/login" className="text-primary hover:underline">
-              Login
-            </Link>
-          </p>
+          {!showOtp && (
+            <p className="mt-6 text-center font-body text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link to="/login" className="text-primary hover:underline">
+                Login
+              </Link>
+            </p>
+          )}
         </motion.div>
       </div>
     </div>

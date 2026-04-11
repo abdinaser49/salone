@@ -38,10 +38,12 @@ import makeup3 from "@/assets/makeup3.jpg";
 import makeup4 from "@/assets/makeup4.jpg";
 import nails2 from "@/assets/Nail Art2.jpg";
 import nails4 from "@/assets/Nail Art4.jpg";
+import makeupCatImg from "@/assets/makeup_cat.png";
 
 // Services with price and duration
 const categories = [
   { id: "beauty", name: "Beauty & Spa", icon: "✨", image: facialImg },
+  { id: "makeup", name: "Makeup Art", icon: "💄", image: makeupCatImg },
   { id: "hair", name: "Hair Styling", icon: "✂️", image: hairImg },
   { id: "nails", name: "Nail Art", icon: "💅", image: nailImg },
   { id: "rentals", name: "Dress Rentals", icon: "👗", image: rentalHero },
@@ -52,8 +54,8 @@ const services = [
   // Beauty
   { id: 1, category: "beauty", name: "Facial Treatment", price: 120, duration: "60–90 min", image: facialImg },
   { id: 2, category: "beauty", name: "Body & Massage", price: 100, duration: "60–120 min", image: bodyImg },
-  { id: 8, category: "beauty", name: "Glam Makeup", price: 150, duration: "90 min", image: makeup3 },
-  { id: 9, category: "beauty", name: "Bridal Makeup", price: 250, duration: "120 min", image: makeup4 },
+  { id: 8, category: "makeup", name: "Glam Makeup", price: 150, duration: "90 min", image: makeup3 },
+  { id: 9, category: "makeup", name: "Bridal Makeup", price: 250, duration: "120 min", image: makeup4 },
   
   // Hair
   { id: 3, category: "hair", name: "Hair Styling", price: 85, duration: "60–120 min", image: hairImg },
@@ -84,7 +86,7 @@ const services = [
 
 const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
 
-const PAYMENT_MERCHANT = "617643394";
+
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -106,8 +108,14 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
   
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [notes, setNotes] = useState("");
   const [paid, setPaid] = useState(false);
   const [dbServices, setDbServices] = useState<any[]>(services);
+  
+  const bizName = localStorage.getItem('bizName') || "Qurux Dumar Salon";
+  const rawPhone = localStorage.getItem('bizPhone') || "617643394";
+  const cleanMerchant = rawPhone.replace(/\D/g, '').slice(-9); // Get last 9 digits as EVC merchant code
+  const merchantCode = cleanMerchant || "617643394";
 
   useEffect(() => {
     if (user) {
@@ -185,7 +193,20 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
     { id: 5, label: "Done" },
   ];
 
-  const handleNext = () => setStep(s => Math.min(s + 1, 5));
+  const handleNext = () => {
+    if (step === 3) {
+      const nameParts = name.trim().split(/\s+/);
+      if (nameParts.length < 3) {
+        toast.error("Fadlan geli magaca oo saddexan (3 Magac)!");
+        return;
+      }
+      if (!phone.trim() || phone.trim().length < 6) {
+        toast.error("Fadlan geli lambarka taleefanka oo sax ah!");
+        return;
+      }
+    }
+    setStep(s => Math.min(s + 1, 5));
+  };
   const handleBack = () => setStep(s => {
     if (s === 2 && !selectedCategoryId) return 1; // Basic safety
     return Math.max(s - 1, 1);
@@ -196,23 +217,39 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
     : [];
 
   const handleConfirm = async () => {
-    if (!user) {
-      toast.error("Waan ka xunnahay, waqti-gii (Session) waa dhacay. Fadlan dib isku diiwaangeli.");
-      onClose();
-      return;
+    // Allow Guest Booking (user can be null)
+    // Ensure we have a valid customer_id to satisfy NOT NULL constraint
+    let finalCustomerIdToSubmit = user?.id || null;
+    
+    if (!finalCustomerIdToSubmit) {
+      // Fallback: Fetch any existing profile ID to satisfy constraint for guest booking
+      const { data: profile } = await supabase.from('profiles').select('id').limit(1).single();
+      if (profile) finalCustomerIdToSubmit = profile.id;
     }
 
+    const formatTimeToDb = (time12h: string) => {
+      if (!time12h.includes(' ')) return time12h; // Already formatted
+      let [time, modifier] = time12h.split(' ');
+      let [hours, minutes] = time.split(':');
+      if (hours === '12') hours = '00';
+      if (modifier === 'PM') hours = (parseInt(hours, 10) + 12).toString();
+      return `${hours.padStart(2, '0')}:${minutes}`;
+    };
+    
     const bookingData = {
-      client_id: user?.id,
+      customer_id: finalCustomerIdToSubmit,
+      service_id: selectedService.id,
       name: name,
       phone: phone,
-      service: localSelectedImage && (selectedService.name === "Wedding Dress Rental" || selectedService.name === "Henna Art") 
-                ? `${selectedService.name} (Selected style)` 
-                : selectedService.name,
-      booking_date: date ? format(date, "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd"),
-      booking_time: startTime,
-      status: "Pending Confirmation",
-      amount: selectedService.price,
+      notes: notes,
+      service: selectedService.name,
+      booking_date: format(date, "yyyy-MM-dd"),
+      start_time: formatTimeToDb(startTime),
+      end_time: formatTimeToDb(endTime),
+      amount: selectedService.price || 0,
+      status: "pending",
+      image_url: localSelectedImage || selectedService.image || null,
+      category: "Online",
     };
 
     try {
@@ -394,23 +431,32 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
                         type="text" 
                         value={name} 
                         onChange={e => setName(e.target.value)}
-                        placeholder="e.g. Maryam Cali"
+                        placeholder="e.g. Maryam Cali Axmed"
                         className="w-full p-5 bg-[#fdfbf7] border-0 rounded-2xl text-sm font-bold text-charcoal focus:ring-2 focus:ring-primary outline-none shadow-inner" 
                       />
                    </div>
-                   <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
-                      <div className="relative">
-                         <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold border-r pr-3 mr-3">+252</div>
-                         <input 
-                          type="tel" 
-                          value={phone} 
-                          onChange={e => setPhone(e.target.value)}
-                          placeholder="61XXXXXXX"
-                          className="w-full p-5 pl-20 bg-[#fdfbf7] border-0 rounded-2xl text-sm font-bold text-charcoal focus:ring-2 focus:ring-primary outline-none shadow-inner" 
-                        />
-                      </div>
-                   </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
+                       <div className="relative">
+                          <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold border-r pr-3 mr-3">+252</div>
+                          <input 
+                           type="tel" 
+                           value={phone} 
+                           onChange={e => setPhone(e.target.value)}
+                           placeholder="61XXXXXXX"
+                           className="w-full p-5 pl-20 bg-[#fdfbf7] border-0 rounded-2xl text-sm font-bold text-charcoal focus:ring-2 focus:ring-primary outline-none shadow-inner" 
+                         />
+                       </div>
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Additional Notes (Optional)</label>
+                       <textarea 
+                         value={notes} 
+                         onChange={e => setNotes(e.target.value)}
+                         placeholder="Any special requests or details..."
+                         className="w-full p-5 bg-[#fdfbf7] border-0 rounded-2xl text-sm font-bold text-charcoal focus:ring-2 focus:ring-primary outline-none shadow-inner h-24 resize-none" 
+                       />
+                    </div>
                 </div>
 
                 {/* Summary Card */}
@@ -431,22 +477,22 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
               <motion.div initial={{opacity:0, y: 10}} animate={{opacity:1, y: 0}} exit={{opacity:0, y: -10}} className="space-y-10 flex flex-col items-center py-4">
                 <div className="text-center space-y-2">
                    <h3 className="text-3xl font-display font-bold text-charcoal">Secure Payment</h3>
-                   <p className="text-gray-400 text-sm">Please pay to merchant {PAYMENT_MERCHANT} (EVC Plus)</p>
+                   <p className="text-gray-400 text-sm">Please pay to merchant {merchantCode} (EVC Plus)</p>
                 </div>
 
-                <div className="w-full max-w-sm bg-zinc-950 text-white p-8 rounded-[3rem] space-y-8 shadow-2xl relative overflow-hidden group">
+                <div className="w-full max-w-sm bg-zinc-950 text-white p-8 rounded-[3rem] shadow-2xl relative overflow-hidden group">
                    <div className="absolute -top-12 -right-12 w-40 h-40 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/30 transition-colors" />
                    <div className="flex justify-between items-center opacity-60">
                       <div className="flex flex-col">
                         <span className="text-[8px] font-bold uppercase tracking-widest">Merchant</span>
-                        <span className="text-xs font-bold">QURUX DUMAR SPA</span>
+                        <span className="text-xs font-bold">{bizName.toUpperCase()}</span>
                       </div>
                       <Sparkles className="w-5 h-5 text-primary" />
                    </div>
                    
-                   <div className="text-center space-y-2">
+                   <div className="text-center space-y-2 relative z-10">
                       <span className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">Payment Code</span>
-                      <div className="text-4xl font-mono font-bold tracking-[0.2em] text-primary">{PAYMENT_MERCHANT}</div>
+                      <div className="text-4xl font-mono font-bold tracking-[0.2em] text-primary">{merchantCode}</div>
                    </div>
 
                    <button 
@@ -522,28 +568,27 @@ const BookingModal = ({ isOpen, onClose, preselectedService, selectedImage }: Bo
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
               <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Previous</span>
             </button>
-            <div className="flex items-center gap-2">
-               {step < 4 ? (
-                 <button 
-                  onClick={handleNext}
-                  disabled={step === 1 && !selectedCategoryId}
-                  className="bg-primary text-white px-10 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
-                >
-                  Next Step
-                </button>
-               ) : (
-                 <button 
-                  onClick={handleConfirm}
-                  disabled={!paid}
-                  className={cn(
-                    "px-12 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-xl active:scale-95",
-                    paid ? "bg-charcoal text-white hover:bg-black shadow-black/20" : "bg-slate-100 text-slate-400 shadow-none cursor-not-allowed"
-                  )}
-                >
-                  Complete Booking
-                </button>
-               )}
-            </div>
+                   <div className="flex items-center gap-2">
+                       {step < 4 ? (
+                         <button 
+                          onClick={handleNext}
+                          disabled={step === 1 && !selectedCategoryId}
+                          className="bg-primary text-white px-10 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+                        >
+                          Next Step
+                        </button>
+                       ) : (
+                         <button 
+                          onClick={handleConfirm}
+                          className={cn(
+                            "px-12 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-xl active:scale-95",
+                            paid ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-500/20" : "bg-primary text-white hover:bg-primary/90 shadow-primary/20"
+                          )}
+                        >
+                          Confirm & Complete Booking
+                        </button>
+                       )}
+                    </div>
           </div>
         )}
         

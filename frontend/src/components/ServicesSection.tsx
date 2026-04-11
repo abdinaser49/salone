@@ -53,7 +53,7 @@ const ServicesSection = ({ onSelectService }: ServicesSectionProps) => {
   }, []);
 
   const getIcon = (item: any) => {
-    const IconComponent = iconMap[item.icon_name] || iconMap[Object.keys(iconMap).find(k => item.name.includes(k)) || "Sparkles"];
+    const IconComponent = iconMap[item.icon_name] || iconMap[Object.keys(iconMap).find(k => item.name.includes(k)) || "Makeup"] || Sparkles;
     return <IconComponent className="w-10 h-10 stroke-[1.5px]" />;
   };
   return (

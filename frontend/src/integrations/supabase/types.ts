@@ -47,12 +47,14 @@ export type Database = {
       bookings: {
         Row: {
           id: string
-          client_id: string | null
+          customer_id: string | null
+          service_id: string | null
           name: string
           phone: string
           service: string
           booking_date: string
-          booking_time: string
+          start_time: string
+          end_time: string
           status: string
           amount: number | null
           image_url: string | null
@@ -62,12 +64,14 @@ export type Database = {
         }
         Insert: {
           id?: string
-          client_id?: string | null
+          customer_id?: string | null
+          service_id?: string | null
           name: string
           phone: string
           service: string
           booking_date: string
-          booking_time: string
+          start_time: string
+          end_time: string
           status?: string
           amount?: number | null
           image_url?: string | null
@@ -77,12 +81,14 @@ export type Database = {
         }
         Update: {
           id?: string
-          client_id?: string | null
+          customer_id?: string | null
+          service_id?: string | null
           name?: string
           phone?: string
           service?: string
           booking_date?: string
-          booking_time?: string
+          start_time?: string
+          end_time?: string
           status?: string
           amount?: number | null
           image_url?: string | null

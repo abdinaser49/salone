@@ -18,6 +18,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showReset, setShowReset] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,14 +29,43 @@ const Login = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      const isAdmin = ADMIN_EMAILS.includes(data.user?.email?.toLowerCase() || "");
+      const email = data.user?.email?.toLowerCase() || "";
+      const isAdmin = ADMIN_EMAILS.includes(email);
+      
+      const { data: staffData } = await supabase
+        .from('staff')
+        .select('*')
+        .eq('email', email)
+        .maybeSingle();
+
+      const isStaff = !!staffData || isAdmin;
+
       if (isAdmin) {
         toast.success("Welcome back, Admin!");
         navigate("/dashboard");
+      } else if (isStaff) {
+        toast.success("Welcome back, Staff!");
+        navigate("/dashboard");
       } else {
         toast.success("Welcome back!");
-        navigate("/dashboard");
+        navigate("/");
       }
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin + "/profile",
+    });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Password reset link sent to your email!");
+      setShowReset(false);
     }
   };
 
@@ -69,60 +99,106 @@ const Login = () => {
             <Link to="/" className="inline-block active:scale-95 transition-transform mb-6">
               <img src={logo} alt="Logo" className="h-20 w-auto" />
             </Link>
-            <h1 className="font-display text-3xl mb-2">Welcome back</h1>
-            <p className="text-muted-foreground font-body text-sm">Enter your email and password to login</p>
+            <h1 className="font-display text-3xl mb-2">{showReset ? "Reset Password" : "Welcome back"}</h1>
+            <p className="text-muted-foreground font-body text-sm">
+              {showReset ? "Enter your email to receive a reset link" : "Enter your email and password to login"}
+            </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block font-body text-sm mb-1.5 text-muted-foreground">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block font-body text-sm mb-1.5 text-muted-foreground">Password</label>
-              <div className="relative">
+          {!showReset ? (
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block font-body text-sm mb-1.5 text-muted-foreground">Email</label>
                 <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors pr-10"
-                  placeholder="••••••••"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors"
+                  placeholder="you@example.com"
                   required
                 />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block font-body text-sm text-muted-foreground">Password</label>
+                  <button 
+                    type="button" 
+                    onClick={() => setShowReset(true)} 
+                    className="text-xs text-primary hover:underline font-semibold"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors pr-10"
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-primary text-primary-foreground py-3 font-body text-sm tracking-[0.15em] uppercase disabled:opacity-50 hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+              >
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                Login
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div>
+                <label className="block font-body text-sm mb-1.5 text-muted-foreground">Email Address</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-3 border border-border bg-background font-body text-sm focus:outline-none focus:border-primary transition-colors"
+                  placeholder="Enter your registered email"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-primary text-primary-foreground py-3 font-body text-sm tracking-[0.15em] uppercase disabled:opacity-50 hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+                >
+                  {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Send Reset Link
+                </button>
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowReset(false)}
+                  className="w-full py-2 font-body text-sm text-muted-foreground uppercase hover:text-foreground transition-colors"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  Back to Login
                 </button>
               </div>
-            </div>
+            </form>
+          )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-primary text-primary-foreground py-3 font-body text-sm tracking-[0.15em] uppercase disabled:opacity-50 hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
-            >
-              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              Login
-            </button>
-          </form>
-
-          <p className="mt-6 text-center font-body text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-primary hover:underline">
-              Create an account
-            </Link>
-          </p>
+          {!showReset && (
+            <p className="mt-6 text-center font-body text-sm text-muted-foreground">
+              Don't have an account?{" "}
+              <Link to="/signup" className="text-primary hover:underline">
+                Create an account
+              </Link>
+            </p>
+          )}
         </motion.div>
       </div>
     </div>

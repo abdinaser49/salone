@@ -12,7 +12,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const supabaseBaseUrl = "https://zimvwvxwvykdxrkmtaqv.supabase.co/storage/v1/object/public/services/";
+const supabaseBaseUrl = "https://oyixtjwjqqaxsmxprhax.supabase.co/storage/v1/object/public/services/";
 const defaultRentals = [
   { name: "Luxury Somali Dirac", image_url: `${supabaseBaseUrl}dirac.jpg`, price: 15, category: "Dress", duration: "1 day", description: "Somali Style" },
   { name: "Traditional Bridal Dirac", image_url: `${supabaseBaseUrl}dirac1.jpg`, price: 15, category: "Dress", duration: "1 day", description: "Classic" },

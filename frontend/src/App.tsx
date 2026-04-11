@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard.tsx";
 import Rentals from "./pages/Rentals.tsx";
 import Contact from "./pages/Contact.tsx";
 import Team from "./pages/Team.tsx";
+import Profile from "./pages/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,11 @@ const App = () => (
             <Route path="/rentals" element={<Rentals />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/team" element={<Team />} />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

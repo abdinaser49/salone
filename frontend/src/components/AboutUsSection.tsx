@@ -26,11 +26,11 @@ const AboutUsSection = () => {
           >
             <div className="flex gap-4">
               <div className="w-1/2 mt-12">
-                <img src={img1} alt="Spa treatment" className="w-full h-[300px] object-cover rounded-t-[8rem] rounded-b-2xl shadow-lg border-4 border-white" />
+                <img src={img1} alt="Spa treatment" className="w-full h-[300px] object-cover rounded-[2rem] shadow-lg border-4 border-white" />
               </div>
               <div className="w-1/2 relative">
-                <img src={img2} alt="Facial treatment" className="w-full h-[350px] object-cover rounded-t-[8rem] rounded-b-2xl shadow-xl border-4 border-white" />
-                <div className="absolute -inset-4 border-2 border-[#E87A5D] rounded-t-[9rem] rounded-b-3xl opacity-20 -z-10"></div>
+                <img src={img2} alt="Facial treatment" className="w-full h-[350px] object-cover rounded-[2rem] shadow-xl border-4 border-white" />
+                <div className="absolute -inset-4 border-2 border-[#E87A5D] rounded-[2.5rem] opacity-20 -z-10"></div>
               </div>
             </div>
             
